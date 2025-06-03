@@ -1098,7 +1098,6 @@ def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
     from string import Template
     import streamlit as st
 
-    # Definisci i template di default
     templates = {
         "Analisi e Gestione del Rischio": RISK_ASSESSMENT_TEMPLATE,
         "Analisi e Classificazione": ANALISI_CLASSIFICAZIONE_TEMPLATE,
@@ -1109,35 +1108,31 @@ def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
         "Piano Risposta Incidenti": PIANO_RISPOSTA_INCIDENTI_TEMPLATE,
         "Valutazione dei Rischi": VALUTAZIONE_RISCHI_TEMPLATE
     }
-
-    # Usa il template specificato o quello di default
     if template_str is None:
         template_str = templates.get(template_name, "")
         if not template_str:
             raise ValueError(f"Template non trovato per {template_name}")
-
-    # Definisci il percorso del logo di default
     if logo_path is None:
         logo_path = r"C:\Users\Francesco\python\nis2lab_logo.png"
-
-    # Inizializza i dati sanificati
+   
     sanitized_data = {}
     for key, value in data.items():
         if isinstance(value, list):
-            sanitized_data[key] = value  # Mantieni liste (es. rischi)
+            sanitized_data[key] = value
         else:
             sanitized_data[key] = sanitize_latex(value) if value else "N/A"
         logging.debug(f"Sanitizzato {key}: {sanitized_data[key]}")
 
-    # Gestione rischi per Analisi e Gestione del Rischio
     if template_name == "Analisi e Gestione del Rischio":
         rischi = data.get("rischi", [])
         if not rischi:
             logging.error("Nessun rischio selezionato")
             raise ValueError("È necessario selezionare almeno un rischio")
-       
         rischi_tabella = []
         for rischio in rischi:
+            if not isinstance(rischio, dict):
+                logging.warning(f"Rischio non valido: {rischio}")
+                continue
             livello_rischio = calcola_livello_rischio(rischio.get("impatto", "Basso"), rischio.get("probabilita", "Bassa"))
             minaccia = sanitize_latex(rischio.get("minaccia", "N/A"))
             impatto = sanitize_latex(rischio.get("impatto", "N/A"))
@@ -1147,60 +1142,52 @@ def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
                 riga = f"{minaccia} & {impatto} & {probabilita} & {livello_rischio} & {note} \\\\"
                 rischi_tabella.append(riga)
         sanitized_data["rischi_tabella"] = "\n".join(rischi_tabella) if rischi_tabella else "Nessun rischio valido \\\\"
-       
         piano_trattamento = sanitize_latex(data.get("piano_trattamento", ""))
         if not piano_trattamento or piano_trattamento == "N/A":
             sanitized_data["piano_trattamento"] = "Firewall & Configurazione aggiornata & Alta & IT Manager \\\\"
         else:
             sanitized_data["piano_trattamento"] = f"{piano_trattamento} & {piano_trattamento} & Media & CISO \\\\"
 
-    # Gestione Nomina CISO
     if template_name == "Nomina CISO":
         responsabilita = data.get("responsabilita", [])
+        if not all(isinstance(resp, str) for resp in responsabilita):
+            logging.warning(f"Responsabilità non valide: {responsabilita}")
+            responsabilita = [resp for resp in responsabilita if isinstance(resp, str)]
         responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita)])
         sanitized_data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
 
-    # Gestione Politica di Sicurezza
     if template_name == "Politica di Sicurezza":
         principi_sicurezza = sanitize_latex(data.get("principi_sicurezza", "Riservatezza; Integrità; Non ripudio"))
         sanitized_data["principi_sicurezza"] = principi_sicurezza if principi_sicurezza else "Riservatezza; Integrità; Non ripudio"
         sanitized_data["misure_sicurezza"] = sanitize_latex(data.get("misure_sicurezza", "Firewall & Protezione rete")) or "Firewall & Protezione rete \\\\"
         sanitized_data["responsabilita_sicurezza"] = sanitize_latex(data.get("responsabilita_sicurezza", "CISO & Implementazione misure")) or "CISO & Implementazione misure \\\\"
 
-    # Gestione Continuità Operativa
     if template_name == "Continuità Operativa":
         obiettivi_piano = sanitize_latex(data.get("obiettivi_piano", "Minimizzare tempi di inattività"))
         sanitized_data["obiettivi_piano"] = obiettivi_piano if obiettivi_piano else "Minimizzare tempi di inattività"
         sanitized_data["procedure_ripristino"] = sanitize_latex(data.get("procedure_ripristino", "Server & Backup giornaliero & 4 ore")) or "Server & Backup giornaliero & 4 ore \\\\"
         sanitized_data["responsabilita_continuita"] = sanitize_latex(data.get("responsabilita_continuita", "CISO & Coordinamento ripristino")) or "CISO & Coordinamento ripristino \\\\"
 
-    # Gestione Verifica di Sicurezza
     if template_name == "Verifica di Sicurezza":
         sanitized_data["risultati_verifica"] = sanitize_latex(data.get("risultati_verifica", "Nessuna vulnerabilità & Conformità verificata")) or "Nessuna vulnerabilità & Conformità verificata \\\\"
         sanitized_data["azioni_correttive"] = sanitize_latex(data.get("azioni_correttive", "Nessuna azione richiesta & N/A")) or "Nessuna azione richiesta & N/A \\\\"
 
-    # Gestione Piano Risposta Incidenti
     if template_name == "Piano Risposta Incidenti":
         sanitized_data["procedure_risposta"] = sanitize_latex(data.get("procedure_risposta", "Notifica & Contenimento")) or "Notifica & Contenimento \\\\"
         sanitized_data["responsabilita_risposta"] = sanitize_latex(data.get("responsabilita_risposta", "CISO & Gestione incidente")) or "CISO & Gestione incidente \\\\"
 
-    # Gestione Valutazione dei Rischi
     if template_name == "Valutazione dei Rischi":
         sanitized_data["rischi_valutati"] = sanitize_latex(data.get("rischi_valutati", "Phishing & Valutazione completata")) or "Phishing & Valutazione completata \\\\"
         sanitized_data["azioni_mitigazione"] = sanitize_latex(data.get("azioni_mitigazione", "Formazione & Prevenzione")) or "Formazione & Prevenzione \\\\"
 
-    # Validazione campo Sede Legale
     sede_legale = data.get("sede_legale", "").strip()
     if not sede_legale:
         logging.error(f"Campo obbligatorio mancante: sede_legale, valore ricevuto: '{sede_legale}'")
         raise ValueError("Il campo 'Sede Legale' è obbligatorio e non può essere vuoto")
     sanitized_data["sede_legale"] = sanitize_latex(sede_legale)
 
-    # Generazione file LaTeX
     temp_dir = r"C:\Users\Francesco\python\temp_latex"
     os.makedirs(temp_dir, exist_ok=True)
-   
-    # Pulizia directory temporanea
     for file in os.listdir(temp_dir):
         file_path = os.path.join(temp_dir, file)
         try:
@@ -1215,7 +1202,6 @@ def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
     try:
         template = Template(template_str)
         latex_content = template.safe_substitute(sanitized_data)
-        # Salva il contenuto .tex per debug
         with open(debug_output, "w", encoding="utf-8") as f:
             f.write(latex_content)
         logging.debug(f"Contenuto LaTeX salvato in: {debug_output}")
@@ -1237,15 +1223,12 @@ def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
             logging.error(f"Errore copia logo: {str(e)}")
             raise Exception(f"Errore copia logo: {str(e)}")
     else:
-        logging.warning("Logo nis2lab_logo.png non trovato nel percorso specificato")
+        logging.warning("Logo nis2lab_logo.png non trovato")
 
     try:
         result = subprocess.run(
             ["latexmk", "-pdf", "-interaction=nonstopmode", "-f", "-verbose", "-diagnostics", tex_file],
-            cwd=temp_dir,
-            capture_output=True,
-            text=True,
-            check=True
+            cwd=temp_dir, capture_output=True, text=True, check=True
         )
         logging.debug(f"latexmk output: {result.stdout}")
         pdf_file = os.path.join(temp_dir, f"{template_name.lower().replace(' ', '_')}.pdf")
@@ -1713,7 +1696,7 @@ for template in templates:
                         responsabilita = data.get("responsabilita", [])
                         responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita) if isinstance(resp, str)])
                         data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
-                    st.session_state.pdf_data[template] = genera_pdf_latex(data, template)
+                    st.session_state.pdf_data[template] = genera_pdf_reportlab(template, data)
                     st.session_state.pdf_generated = template
                 except Exception as e:
                     st.error(f"Errore generazione documento: {str(e)}")
