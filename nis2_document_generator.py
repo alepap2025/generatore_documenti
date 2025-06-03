@@ -1092,7 +1092,7 @@ Le responsabilità per l’esecuzione del piano sono assegnate come segue:
 # Template documenti
 templates = {
     "Politica di Sicurezza": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "direttore_nome", "principi_sicurezza", "obiettivi_sicurezza", "ambiti_applicazione", "struttura_organizzativa", "misure_sicurezza", "responsabilita_sicurezza"],
+        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "direttore_nome", "principi_sicurezza", "obiettivi_sicurezza", "ambiti_applicazione", "struttura_organizzativa", "misure_sicurezza", "responsabilita_sicurezza", "data_revisione"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1103,6 +1103,9 @@ templates = {
             Spacer(1, 12),
             Paragraph("APPROVAZIONE", styles['LegalHeader']),
             Paragraph(f"Approvata da {data['direttore_nome']} in data {data['data']}", styles['LegalBody']),
+            Spacer(1, 12),
+            Paragraph("DATA DI REVISIONE", styles['LegalHeader']),
+            Paragraph(f"{data['data_revisione']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("PRINCIPI DI SICUREZZA", styles['LegalHeader']),
             Paragraph(f"{data['principi_sicurezza']}", styles['LegalBody']),
@@ -1152,7 +1155,7 @@ templates = {
         ]
     },
     "Nomina CISO": {
-        "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita"],
+        "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita", "formazione_richiesta"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1184,6 +1187,9 @@ templates = {
                     ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
                 ])),
+            Spacer(1, 12),
+            Paragraph("FORMAZIONE RICHIESTA", styles['LegalHeader']),
+            Paragraph(f"{data['formazione_richiesta']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("DURATA E REVOCA", styles['LegalHeader']),
             Paragraph("La nomina ha durata indeterminata e può essere revocata con comunicazione scritta.", styles['LegalBody']),
@@ -1263,7 +1269,7 @@ templates = {
                     ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
                     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
                     ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F5F5DC'))
@@ -1274,7 +1280,7 @@ templates = {
         ]
     },
     "Continuità Operativa": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita"],
+        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1296,7 +1302,10 @@ templates = {
             Paragraph(f"{data['procedure_recovery']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("TEST E MANUTENZIONE", styles['LegalHeader']),
-            Paragraph(f"{data['test_manutenzione']}", styles['LegalBody'])
+            Paragraph(f"{data['test_manutenzione']}", styles['LegalBody']),
+            Spacer(1, 12),
+            Paragraph("RTO E RPO", styles['LegalHeader']),
+            Paragraph(f"{data['rto_rpo']}", styles['LegalBody'])
         ]
     }
 }
