@@ -114,14 +114,10 @@ def sanitize_latex(text):
     if not text:
         return "N/A"
     text = str(text).strip()
-
-    # Gestisci input specifici
     if text.lower() in ["sì", "si"]:
         return r"S\`i"
     if text.lower() == "no":
         return "No"
-
-    # Caratteri accentati
     accent_map = {
         "à": r"\`a", "è": r"\`e", "ì": r"\`i", "ò": r"\`o", "ù": r"\`u",
         "á": r"\'a", "é": r"\'e", "í": r"\'i", "ó": r"\'o", "ú": r"\'u",
@@ -129,8 +125,6 @@ def sanitize_latex(text):
         "ç": r"\c{c}", "ñ": r"\~n", "Ñ": r"\~N", "€": r"\euro{}", "°": r"\textdegree{}",
         "’": r"\textquotesingle{}", "“": r"``", "”": r"''", "–": r"--", "—": r"---"
     }
-
-    # Caratteri speciali LaTeX
     special_chars = {
         "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_",
         "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}",
@@ -139,123 +133,83 @@ def sanitize_latex(text):
         "\"": r"\textquotedbl{}", "'": r"\textquotesingle{}", ",": r"\,",
         "(": r"\(", ")": r"\)", ";": r"\;", ":": r"\:", "/": r"/"
     }
-
-    # Sostituisci caratteri
     for char, repl in accent_map.items():
         text = text.replace(char, repl)
     for char, repl in special_chars.items():
         text = text.replace(char, repl)
-
-    # Rimuovi caratteri di controllo e non stampabili
     text = re.sub(r"[\x00-\x1F\x7F-\x9F]", "", text)
     text = re.sub(r"\s+", " ", text).strip()
-
-    # Limita lunghezza
     if len(text) > 200:
         text = text[:200] + "..."
-
-    # Escapa le graffe per Python
     text = text.replace("{", "{{").replace("}", "}}")
-
     return text
 
 # Elenco predefinito di rischi
 RISCHI = {
     "Danni fisici": [
-        "Incendio",
-        "Allagazione",
-        "Polvere, corrosione, congelamento",
+        "Incendio", "Allagazione", "Polvere, corrosione, congelamento",
         "Distruzione di strumentazione da parte di malintenzionati o per errore",
         "Attacchi (bombe, terroristi)"
     ],
     "Eventi naturali": [
-        "Fenomeni climatici (uragani, nevicate)",
-        "Terremoti, eruzioni vulcaniche",
+        "Fenomeni climatici (uragani, nevicate)", "Terremoti, eruzioni vulcaniche",
         "Fulmini e scariche atmosferiche"
     ],
     "Perdita di servizi essenziali": [
-        "Guasto aria condizionata o sistemi di raffreddamento",
-        "Perdita di energia (o sbalzi di tensione)",
-        "Malfunzionamento nei componenti di rete",
-        "Errori di trasmissione (incluso il misrouting)",
+        "Guasto aria condizionata o sistemi di raffreddamento", "Perdita di energia (o sbalzi di tensione)",
+        "Malfunzionamento nei componenti di rete", "Errori di trasmissione (incluso il misrouting)",
         "Interruzione nei collegamenti di rete (inclusi danni alle linee di TLC)",
-        "Eccesso di traffico sulla rete",
-        "Interruzione di servizi erogati riconducibili ai fornitori esterni",
+        "Eccesso di traffico sulla rete", "Interruzione di servizi erogati riconducibili ai fornitori esterni",
         "Indisponibilità di personale (malattie, sciopero, eccetera)"
     ],
-    "Disturbi": [
-        "Disturbi elettromagnetici"
-    ],
+    "Disturbi": ["Disturbi elettromagnetici"],
     "Compromissione di informazioni": [
-        "Intercettazione (inclusa analisi del traffico)",
-        "Furto di documenti o supporti di memorizzazione",
-        "Furto di apparati o componenti",
-        "Recupero di informazioni da media dismessi",
-        "Rivelazione di informazioni (da parte del personale o fornitori)",
-        "Ricezione dati da origini non affidabili",
-        "Infiltrazione nelle comunicazioni",
-        "Ripudio dei messaggi",
-        "Accesso non autorizzato alle informazioni"
+        "Intercettazione (inclusa analisi del traffico)", "Furto di documenti o supporti di memorizzazione",
+        "Furto di apparati o componenti", "Recupero di informazioni da media dismessi",
+        "Rivelazione di informazioni (da parte del personale o fornitori)", "Ricezione dati da origini non affidabili",
+        "Infiltrazione nelle comunicazioni", "Ripudio dei messaggi", "Accesso non autorizzato alle informazioni"
     ],
     "Problemi tecnici": [
-        "Fault o malfunzionamento della strumentazione IT",
-        "Saturazione dei sistemi IT",
+        "Fault o malfunzionamento della strumentazione IT", "Saturazione dei sistemi IT",
         "Malfunzionamenti software applicativi sviluppati per i clienti",
         "Malfunzionamenti pacchetti software usati internamente",
         "Malfunzionamenti software applicativi sviluppati per uso interno",
         "Errori di manutenzione hardware e software di base"
     ],
     "Azioni non autorizzate": [
-        "Uso non autorizzato o negligente della strumentazione",
-        "Importazione o esportazione illegale di software",
-        "Alterazione volontaria e non autorizzata di dati di business",
-        "Virus (malware, anche per mobile)",
-        "Accesso non autorizzato alla rete",
-        "Uso non autorizzato della rete da parte degli utenti",
+        "Uso non autorizzato o negligente della strumentazione", "Importazione o esportazione illegale di software",
+        "Alterazione volontaria e non autorizzata di dati di business", "Virus (malware, anche per mobile)",
+        "Accesso non autorizzato alla rete", "Uso non autorizzato della rete da parte degli utenti",
         "Trattamento non consentito di dati (personali)"
     ],
     "Compromissione di funzioni": [
-        "Errori degli utenti di business",
-        "Uso dei servizi da parte di persone non autorizzate",
-        "Degrado dei media (memorie di massa)",
-        "Uso di servizi in modo non autorizzato",
-        "Furto identità"
+        "Errori degli utenti di business", "Uso dei servizi da parte di persone non autorizzate",
+        "Degrado dei media (memorie di massa)", "Uso di servizi in modo non autorizzato", "Furto identità"
     ],
     "Trattamento dati personali": [
-        "Eccessiva raccolta di dati personali",
-        "Collegamenti o raffronti inappropriati di dati personali",
+        "Eccessiva raccolta di dati personali", "Collegamenti o raffronti inappropriati di dati personali",
         "Divulgazione o riuso per finalità diverse dei dati personali",
         "Conservazione immotivamente prolungata dei dati personali",
         "Inesattezza o mancato aggiornamento dei dati personali",
-        "Violazione delle istruzioni ricevute in materia di dati personali",
-        "Trasferimento dati personali extra UE senza garanzie"
+        "Violazione dei dati personali", "Trasferimento dati personali extra UE senza garanzie"
     ],
     "Direzione": [
-        "Mancanza di impegno della direzione",
-        "Mancanza di investimenti e di risorse nel SG",
+        "Mancanza di impegno della direzione", "Mancanza di investimenti e di risorse nel SG",
         "Inserimento di nuovi soci o partner"
     ],
     "Sistema di gestione": [
-        "Aggiornamento non corretto della documentazione",
-        "Adozione di nuovi strumenti e software",
+        "Aggiornamento non corretto della documentazione", "Adozione di nuovi strumenti e software",
         "Nuovi obblighi di origine normativa o legislativa"
     ],
     "Rapporto con i clienti": [
-        "Inadeguato recepimento delle esigenze dei clienti",
-        "Inadeguatezza delle offerte rispetto alle esigenze dei clienti"
+        "Inadeguato recepimento delle esigenze dei clienti", "Inadeguatezza delle offerte rispetto ai clienti"
     ],
-    "Monitoraggio": [
-        "Monitoraggi inadeguati"
-    ],
+    "Monitoraggio": ["Monitoraggi inadeguati"],
     "Esercizio": [
-        "Errori a causa della mancata pianificazione",
-        "Errori a causa di carenza nella formazione",
-        "Errori a causa di documentazione carente",
-        "Picco di lavoro"
+        "Errori a causa della mancata pianificazione", "Errori a causa di carenza nella formazione",
+        "Errori a causa di documentazione carente", "Picco di lavoro"
     ],
-    "Reato": [
-        "Uso malware"
-    ]
+    "Reato": ["Uso malware"]
 }
 
 # Opzioni predefinite per i form
@@ -263,21 +217,11 @@ SETTORI = ["Manifatturiero", "Sanità", "Energia", "Trasporti", "Finanza", "Tele
 RUOLI_SUPPLY_CHAIN = ["Produttore", "Fornitore", "Distributore", "Cliente finale", "Altro"]
 SOGGETTO_ESSENZIALE = ["Sì", "No"]
 RESPONSABILITA_CISO = [
-    "Definizione politiche di sicurezza",
-    "Gestione rischi informatici",
-    "Monitoraggio minacce",
-    "Protezione dati",
-    "Risposta agli incidenti",
-    "Formazione personale",
-    "Collaborazione con autorità",
-    "Conformità normativa",
-    "Sicurezza supply chain",
-    "Gestione budget sicurezza",
-    "Resilienza sistemi critici",
-    "Threat intelligence",
-    "Certificazioni sicurezza",
-    "Penetration testing",
-    "Cultura della sicurezza"
+    "Definizione politiche di sicurezza", "Gestione rischi informatici", "Monitoraggio minacce",
+    "Protezione dati", "Risposta agli incidenti", "Formazione personale", "Collaborazione con autorità",
+    "Conformità normativa", "Sicurezza supply chain", "Gestione budget sicurezza",
+    "Resilienza sistemi critici", "Threat intelligence", "Certificazioni sicurezza",
+    "Penetration testing", "Cultura della sicurezza"
 ]
 PRINCIPI_SICUREZZA = ["Riservatezza", "Integrità", "Disponibilità", "Autenticità", "Non ripudio"]
 AMBITI_APPLICAZIONE = ["Sistemi IT", "Personale", "Fornitori", "Infrastrutture fisiche", "Dati sensibili"]
@@ -288,18 +232,10 @@ PROCEDURE_RECOVERY = ["Ripristino dati", "Ricostituzione servizi", "Comunicazion
 # Funzione per calcolare il livello di rischio
 def calcola_livello_rischio(impatto, probabilita):
     matrice_rischio = {
-        ("Basso", "Bassa"): "Basso",
-        ("Basso", "Media"): "Basso",
-        ("Basso", "Alta"): "Medio",
-        ("Medio", "Bassa"): "Basso",
-        ("Medio", "Media"): "Medio",
-        ("Medio", "Alta"): "Alto",
-        ("Alto", "Bassa"): "Medio",
-        ("Alto", "Media"): "Alto",
-        ("Alto", "Alta"): "Alto",
-        ("Critico", "Bassa"): "Alto",
-        ("Critico", "Media"): "Alto",
-        ("Critico", "Alta"): "Alto"
+        ("Basso", "Bassa"): "Basso", ("Basso", "Media"): "Basso", ("Basso", "Alta"): "Medio",
+        ("Medio", "Bassa"): "Basso", ("Medio", "Media"): "Medio", ("Medio", "Alta"): "Alto",
+        ("Alto", "Bassa"): "Medio", ("Alto", "Media"): "Alto", ("Alto", "Alta"): "Alto",
+        ("Critico", "Bassa"): "Alto", ("Critico", "Media"): "Alto", ("Critico", "Alta"): "Alto"
     }
     return matrice_rischio.get((impatto, probabilita), "N/A")
 
@@ -992,8 +928,8 @@ Il piano di trattamento del rischio include le seguenti misure:
 \end{document}
 """
 
-# Template LaTeX per 
-CONTINUITA_OPERATIVA_TEMPLATE = """
+# Template LaTeX per Continuità Operativa
+CONTINUITA_OPERATIVA_TEMPLATE = r"""
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -1088,6 +1024,7 @@ Le responsabilità per l’esecuzione del piano sono assegnate come segue:
 
 \end{document}
 """
+
 
 # Template documenti
 templates = {
@@ -1361,17 +1298,14 @@ templates = {
 def _reportlab(template_name, data):
     output = io.BytesIO()
     pdf = SimpleDocTemplate(output, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
-   
-    # Inizializza gli stili
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='LegalTitle', fontName='Times-Bold', fontSize=16, alignment=1, spaceAfter=12))
     styles.add(ParagraphStyle(name='LegalHeader', fontName='Times-Bold', fontSize=14, textColor=colors.HexColor('#2C3E50'), spaceAfter=10))
     styles.add(ParagraphStyle(name='LegalBody', fontName='Helvetica', fontSize=12, spaceAfter=8))
-
-    # Passa styles e data al template
     elements = templates[template_name]["content"](data, styles)
     pdf.build(elements)
     return output.getvalue()
+
 # Sidebar di navigazione
 st.sidebar.title("Navigazione")
 if st.sidebar.button("Home"):
