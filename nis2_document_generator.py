@@ -71,7 +71,7 @@ if 'step' not in st.session_state:
         {"minaccia": "Furto di documenti", "verosimiglianza": "2", "parametri": "R", "rischio": "24", "mitigazione": ""}
     ]
     st.session_state.checklist = [
-        {"controllo": "Politiche di sicurezza delle informazioni", "valore": "1", "rischio": "9", "stato": "Non iniziato"},
+        {"controllo": "Politiche per la sicurezza delle informazioni", "valore": "1", "rischio": "9", "stato": "Non iniziato"},
         {"controllo": "Nomina CISO", "valore": "3", "rischio": "18", "stato": "Non iniziato"},
         {"controllo": "Piano di risposta agli incidenti", "valore": "1", "rischio": "36", "stato": "Non iniziato"}
     ]
@@ -103,7 +103,7 @@ def save_clienti(clienti):
 st.markdown("<div class='header-logo'>", unsafe_allow_html=True)
 logo_path = "nis2lab_logo.png"
 if os.path.exists(logo_path):
-    st.image(logo_path, width=50)
+    st.image(logo_path, width=250)
 else:
     st.markdown("<h1 style='color: #2C3E50;'>NIS2Lab</h1>", unsafe_allow_html=True)
     logging.warning("Logo nis2lab_logo.png non trovato nel percorso specificato")
@@ -128,7 +128,7 @@ def sanitize_latex(text):
     special_chars = {
         "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_",
         "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}",
-        "\\": r"\textbackslash{}", "[": r"\lbrack{}", "]": r"\rbrack{}",
+        "\\": r"\textbackslash{}", "[": r"\[", "]": r"\]",
         "<": r"\textless{}", ">": r"\textgreater{}", "|": r"\textbar{}",
         "\"": r"\textquotedbl{}", "'": r"\textquotesingle{}", ",": r"\,",
         "(": r"\(", ")": r"\)", ";": r"\;", ":": r"\:", "/": r"/"
@@ -152,7 +152,7 @@ RISCHI = {
         "Attacchi (bombe, terroristi)"
     ],
     "Eventi naturali": [
-        "Fenomeni climatici (uragani, nevicate)", "Terremoti, eruzioni vulcaniche",
+        "Fenomeni climatici (uragani, nevicate)", "Terremoto",
         "Fulmini e scariche atmosferiche"
     ],
     "Perdita di servizi essenziali": [
@@ -977,7 +977,7 @@ CONTINUITA_OPERATIVA_TEMPLATE = r"""
 \section*{Introduzione}
 \color{black}
 \noindent
-Il presente piano descrive le procedure per garantire la continuità operativa di \detokenize{${ragione_sociale}} in conformità alla Direttiva (UE) 2022/2555 (NIS2).
+Il presente piano descrive le procedure per garantire la continuità operativa di \detokenize{${ragione_sociale}} in conformità alla Direttiva (UE) 2022/2555 (NIS2). È progettato per minimizzare l'impatto delle interruzioni, come disastri naturali, attacchi informatici o guasti tecnici, e assicurare la resilienza operativa.
 
 \vspace{0.5cm}
 
@@ -989,6 +989,42 @@ Gli obiettivi del piano sono:
 
 \begin{itemize}
     \item \detokenize{${obiettivi_piano}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Ambito di applicazione
+\section*{Ambito di Applicazione}
+\color{black}
+\noindent
+Il piano si applica a:
+
+\begin{itemize}
+    \item \detokenize{${ambito_applicazione}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Riferimenti normativi
+\section*{Riferimenti Normativi}
+\color{bluscuro}
+\noindent
+Il piano è conforme ai seguenti riferimenti normativi:
+
+\begin{itemize}
+    \item \detokenize{${riferimenti_normativi}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Responsabile del piano
+\section*{Responsabile del Piano}
+\color{black}
+\noindent
+Il responsabile del piano è:
+
+\begin{itemize}
+    \item \detokenize{${responsabile_piano}}
 \end{itemize}
 
 \vspace{0.5cm}
@@ -1023,9 +1059,116 @@ Le responsabilità per l’esecuzione del piano sono assegnate come segue:
     \bottomrule
 \end{tabularx}
 
+\vspace{0.5cm}
+
+% Funzioni critiche
+\section*{Funzioni Critiche}
+\color{black}
+\noindent
+Le seguenti funzioni critiche sono state identificate:
+
+\begin{itemize}
+    \item \detokenize{${funzioni_critiche}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Strategie di continuità
+\section*{Strategie di Continuità}
+\color{bluscuro}
+\noindent
+Le seguenti strategie sono implementate:
+
+\begin{itemize}
+    \item \detokenize{${strategie_continuita}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Procedure di recovery
+\section*{Procedure di Recovery}
+\color{black}
+\noindent
+Le procedure di recupero includono:
+
+\begin{itemize}
+    \item \detokenize{${procedure_recovery}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% RTO e RPO
+\section*{Obiettivi di Ripristino (RTO e RPO)}
+\color{bluscuro}
+\noindent
+Gli obiettivi di ripristino sono:
+
+\begin{itemize}
+    \item \detokenize{${rto_rpo}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Team di gestione crisi
+\section*{Team di Gestione Crisi}
+\color{black}
+\noindent
+Il team di gestione crisi è composto da:
+
+\begin{itemize}
+    \item \detokenize{${team_crisi}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Protocolli di comunicazione
+\section*{Protocolli di Comunicazione}
+\color{bluscuro}
+\noindent
+I protocolli di comunicazione includono:
+
+\begin{itemize}
+    \item \detokenize{${comunicazione_crisi}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Contatti di emergenza
+\section*{Contatti di Emergenza}
+\color{black}
+\noindent
+Elenco dei contatti di emergenza:
+
+\begin{itemize}
+    \item \detokenize{${contatti_emergenza}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Gestione supply chain
+\section*{Gestione della Supply Chain}
+\color{bluscuro}
+\noindent
+Le misure per la supply chain sono:
+
+\begin{itemize}
+    \item \detokenize{${supply_chain}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Test e manutenzione
+\section*{Test e Manutenzione}
+\color{black}
+\noindent
+Il piano è soggetto a:
+
+\begin{itemize}
+    \item \detokenize{${test_manutenzione}}
+\end{itemize}
+
 \end{document}
 """
-
 
 # Template documenti
 templates = {
