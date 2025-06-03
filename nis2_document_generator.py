@@ -1592,7 +1592,7 @@ for template in templates:
                                 value="Dettagli sull'implementazione della strategia, incluse risorse e tempistiche."
                             )
                             strategie_selezionate.append(f"{strategia}: {descrizione}")
-                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate))
+                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
                 elif field == "rto_rpo" and template == "Continuità Operativa":
                     st.session_state.template_data[template][field] = st.text_area("RTO e RPO", value="RTO: 4 ore per funzioni critiche; RPO: 2 ore per dati essenziali.", key=f"{field}_{template}")
                 elif field == "team_crisi" and template == "Continuità Operativa":
