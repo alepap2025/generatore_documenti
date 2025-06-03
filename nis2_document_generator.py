@@ -1502,22 +1502,22 @@ for template in templates:
                                 })
                     st.session_state.template_data[template]["rischi"] = rischi_selezionati
                 elif field == "responsabilita" and template == "Nomina CISO":
-                st.subheader("Selezione Responsabilità CISO")
-                # Checkbox per selezionare tutte le responsabilità
-                select_all = st.checkbox("Seleziona tutte le responsabilità", key=f"select_all_resp_{template}")
-                if select_all:
-                    for resp in RESPONSABILITA_CISO:
-                        st.session_state[f"resp_{resp}_{template}"] = True
-                responsabilita_selezionate = []
-                for resp in sorted(RESPONSABILITA_CISO):
-                    checked = st.checkbox(
-                        resp,
-                        key=f"resp_{resp}_{template}",
-                        value=st.session_state.get(f"resp_{resp}_{template}", select_all)
-                    )
-                    if checked:
-                        responsabilita_selezionate.append(resp)
-                st.session_state.template_data[template][field] = responsabilita_selezionate
+                    st.subheader("Selezione Responsabilità CISO")
+                    # Checkbox per selezionare tutte le responsabilità
+                    select_all = st.checkbox("Seleziona tutte le responsabilità", key=f"select_all_resp_{template}")
+                    if select_all:
+                        for resp in RESPONSABILITA_CISO:
+                            st.session_state[f"resp_{resp}_{template}"] = True
+                    responsabilita_selezionate = []
+                    for resp in sorted(RESPONSABILITA_CISO):
+                        checked = st.checkbox(
+                            resp,
+                            key=f"resp_{resp}_{template}",
+                            value=st.session_state.get(f"resp_{resp}_{template}", select_all)
+                        )
+                        if checked:
+                            responsabilita_selezionate.append(resp)
+                    st.session_state.template_data[template][field] = responsabilita_selezionate
                 elif field == "settore" and template == "Analisi e Classificazione":
                     st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
                 elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
