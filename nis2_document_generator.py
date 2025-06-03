@@ -101,7 +101,7 @@ def save_clienti(clienti):
 
 # Logo
 st.markdown("<div class='header-logo'>", unsafe_allow_html=True)
-logo_path = r"C:\Users\Francesco\python\nis2lab_logo.png"
+logo_path = "nis2lab_logo.png"
 if os.path.exists(logo_path):
     st.image(logo_path, width=250)
 else:
@@ -1089,188 +1089,11 @@ Le responsabilità per l’esecuzione del piano sono assegnate come segue:
 \end{document}
 """
 
-def genera_pdf_latex(data, template_name, template_str=None, logo_path=None):
-    import os
-    import shutil
-    import subprocess
-    import logging
-    import time
-    from string import Template
-    import streamlit as st
-
-    templates = {
-        "Analisi e Gestione del Rischio": RISK_ASSESSMENT_TEMPLATE,
-        "Analisi e Classificazione": ANALISI_CLASSIFICAZIONE_TEMPLATE,
-        "Nomina CISO": NOMINA_CISO_TEMPLATE,
-        "Politica di Sicurezza": POLITICA_SICUREZZA_TEMPLATE,
-        "Continuità Operativa": CONTINUITA_OPERATIVA_TEMPLATE,
-        "Verifica di Sicurezza": VERIFICA_SICUREZZA_TEMPLATE,
-        "Piano Risposta Incidenti": PIANO_RISPOSTA_INCIDENTI_TEMPLATE,
-        "Valutazione dei Rischi": VALUTAZIONE_RISCHI_TEMPLATE
-    }
-    if template_str is None:
-        template_str = templates.get(template_name, "")
-        if not template_str:
-            raise ValueError(f"Template non trovato per {template_name}")
-    if logo_path is None:
-        logo_path = r"C:\Users\Francesco\python\nis2lab_logo.png"
-   
-    sanitized_data = {}
-    for key, value in data.items():
-        if isinstance(value, list):
-            sanitized_data[key] = value
-        else:
-            sanitized_data[key] = sanitize_latex(value) if value else "N/A"
-        logging.debug(f"Sanitizzato {key}: {sanitized_data[key]}")
-
-    if template_name == "Analisi e Gestione del Rischio":
-        rischi = data.get("rischi", [])
-        if not rischi:
-            logging.error("Nessun rischio selezionato")
-            raise ValueError("È necessario selezionare almeno un rischio")
-        rischi_tabella = []
-        for rischio in rischi:
-            if not isinstance(rischio, dict):
-                logging.warning(f"Rischio non valido: {rischio}")
-                continue
-            livello_rischio = calcola_livello_rischio(rischio.get("impatto", "Basso"), rischio.get("probabilita", "Bassa"))
-            minaccia = sanitize_latex(rischio.get("minaccia", "N/A"))
-            impatto = sanitize_latex(rischio.get("impatto", "N/A"))
-            probabilita = sanitize_latex(rischio.get("probabilita", "N/A"))
-            note = sanitize_latex(rischio.get("note", ""))
-            if all([minaccia, impatto, probabilita, livello_rischio]):
-                riga = f"{minaccia} & {impatto} & {probabilita} & {livello_rischio} & {note} \\\\"
-                rischi_tabella.append(riga)
-        sanitized_data["rischi_tabella"] = "\n".join(rischi_tabella) if rischi_tabella else "Nessun rischio valido \\\\"
-        piano_trattamento = sanitize_latex(data.get("piano_trattamento", ""))
-        if not piano_trattamento or piano_trattamento == "N/A":
-            sanitized_data["piano_trattamento"] = "Firewall & Configurazione aggiornata & Alta & IT Manager \\\\"
-        else:
-            sanitized_data["piano_trattamento"] = f"{piano_trattamento} & {piano_trattamento} & Media & CISO \\\\"
-
-    if template_name == "Nomina CISO":
-        responsabilita = data.get("responsabilita", [])
-        if not all(isinstance(resp, str) for resp in responsabilita):
-            logging.warning(f"Responsabilità non valide: {responsabilita}")
-            responsabilita = [resp for resp in responsabilita if isinstance(resp, str)]
-        responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita)])
-        sanitized_data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
-
-    if template_name == "Politica di Sicurezza":
-        principi_sicurezza = sanitize_latex(data.get("principi_sicurezza", "Riservatezza; Integrità; Non ripudio"))
-        sanitized_data["principi_sicurezza"] = principi_sicurezza if principi_sicurezza else "Riservatezza; Integrità; Non ripudio"
-        sanitized_data["misure_sicurezza"] = sanitize_latex(data.get("misure_sicurezza", "Firewall & Protezione rete")) or "Firewall & Protezione rete \\\\"
-        sanitized_data["responsabilita_sicurezza"] = sanitize_latex(data.get("responsabilita_sicurezza", "CISO & Implementazione misure")) or "CISO & Implementazione misure \\\\"
-
-    if template_name == "Continuità Operativa":
-        obiettivi_piano = sanitize_latex(data.get("obiettivi_piano", "Minimizzare tempi di inattività"))
-        sanitized_data["obiettivi_piano"] = obiettivi_piano if obiettivi_piano else "Minimizzare tempi di inattività"
-        sanitized_data["procedure_ripristino"] = sanitize_latex(data.get("procedure_ripristino", "Server & Backup giornaliero & 4 ore")) or "Server & Backup giornaliero & 4 ore \\\\"
-        sanitized_data["responsabilita_continuita"] = sanitize_latex(data.get("responsabilita_continuita", "CISO & Coordinamento ripristino")) or "CISO & Coordinamento ripristino \\\\"
-
-    if template_name == "Verifica di Sicurezza":
-        sanitized_data["risultati_verifica"] = sanitize_latex(data.get("risultati_verifica", "Nessuna vulnerabilità & Conformità verificata")) or "Nessuna vulnerabilità & Conformità verificata \\\\"
-        sanitized_data["azioni_correttive"] = sanitize_latex(data.get("azioni_correttive", "Nessuna azione richiesta & N/A")) or "Nessuna azione richiesta & N/A \\\\"
-
-    if template_name == "Piano Risposta Incidenti":
-        sanitized_data["procedure_risposta"] = sanitize_latex(data.get("procedure_risposta", "Notifica & Contenimento")) or "Notifica & Contenimento \\\\"
-        sanitized_data["responsabilita_risposta"] = sanitize_latex(data.get("responsabilita_risposta", "CISO & Gestione incidente")) or "CISO & Gestione incidente \\\\"
-
-    if template_name == "Valutazione dei Rischi":
-        sanitized_data["rischi_valutati"] = sanitize_latex(data.get("rischi_valutati", "Phishing & Valutazione completata")) or "Phishing & Valutazione completata \\\\"
-        sanitized_data["azioni_mitigazione"] = sanitize_latex(data.get("azioni_mitigazione", "Formazione & Prevenzione")) or "Formazione & Prevenzione \\\\"
-
-    sede_legale = data.get("sede_legale", "").strip()
-    if not sede_legale:
-        logging.error(f"Campo obbligatorio mancante: sede_legale, valore ricevuto: '{sede_legale}'")
-        raise ValueError("Il campo 'Sede Legale' è obbligatorio e non può essere vuoto")
-    sanitized_data["sede_legale"] = sanitize_latex(sede_legale)
-
-    temp_dir = r"C:\Users\Francesco\python\temp_latex"
-    os.makedirs(temp_dir, exist_ok=True)
-    for file in os.listdir(temp_dir):
-        file_path = os.path.join(temp_dir, file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            logging.warning(f"Errore pulizia file temporaneo {file_path}: {str(e)}")
-
-    tex_file = os.path.join(temp_dir, f"{template_name.lower().replace(' ', '_')}.tex")
-    debug_tex = os.path.join(temp_dir, f"debug_{template_name.lower().replace(' ', '_')}_{time.strftime('%Y%m%d_%H%M%S')}.tex")
-    debug_output = os.path.join(temp_dir, "debug_output.tex")
-    try:
-        template = Template(template_str)
-        latex_content = template.safe_substitute(sanitized_data)
-        with open(debug_output, "w", encoding="utf-8") as f:
-            f.write(latex_content)
-        logging.debug(f"Contenuto LaTeX salvato in: {debug_output}")
-        with open(tex_file, "w", encoding="utf-8") as f:
-            f.write(latex_content)
-        logging.debug(f"File LaTeX salvato: {tex_file}")
-        shutil.copy(tex_file, debug_tex)
-        logging.debug(f"Copia di debug salvata: {debug_tex}")
-        st.session_state.latex_content = latex_content
-    except Exception as e:
-        logging.error(f"Errore generazione file LaTeX: {str(e)}")
-        raise Exception(f"Errore generazione file LaTeX: {str(e)}")
-
-    if os.path.exists(logo_path):
-        try:
-            shutil.copy(logo_path, os.path.join(temp_dir, "nis2lab_logo.png"))
-            logging.debug("Logo copiato correttamente")
-        except Exception as e:
-            logging.error(f"Errore copia logo: {str(e)}")
-            raise Exception(f"Errore copia logo: {str(e)}")
-    else:
-        logging.warning("Logo nis2lab_logo.png non trovato")
-
-    try:
-        result = subprocess.run(
-            ["latexmk", "-pdf", "-interaction=nonstopmode", "-f", "-verbose", "-diagnostics", tex_file],
-            cwd=temp_dir, capture_output=True, text=True, check=True
-        )
-        logging.debug(f"latexmk output: {result.stdout}")
-        pdf_file = os.path.join(temp_dir, f"{template_name.lower().replace(' ', '_')}.pdf")
-        if not os.path.exists(pdf_file):
-            logging.error(f"PDF non generato. Log: {result.stderr}")
-            debug_log = os.path.join(temp_dir, f"latexmk_log_{template_name.lower().replace(' ', '_')}_{time.strftime('%Y%m%d_%H%M%S')}.txt")
-            with open(debug_log, "w", encoding="utf-8") as f:
-                f.write(f"STDOUT:\n{result.stdout}\n\nSTDERR:\n{result.stderr}")
-            raise Exception(f"PDF non generato. Log salvato in: {debug_log}")
-        with open(pdf_file, "rb") as f:
-            pdf_data = f.read()
-        logging.debug("PDF generato correttamente")
-        return pdf_data
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Errore compilazione LaTeX: {e.stderr}")
-        debug_log = os.path.join(temp_dir, f"latexmk_log_{template_name.lower().replace(' ', '_')}_{time.strftime('%Y%m%d_%H%M%S')}.txt")
-        with open(debug_log, "w", encoding="utf-8") as f:
-            f.write(f"STDOUT:\n{e.stdout}\n\nSTDERR:\n{e.stderr}")
-        raise Exception(f"Errore compilazione LaTeX. Log salvato in: {debug_log}")
-    except Exception as e:
-        logging.error(f"Errore generico: {str(e)}")
-        raise Exception(f"Errore generico: {str(e)}")
-
-# Funzione per generare PDF con reportlab
-def genera_pdf_reportlab(template_name, data):
-    output = io.BytesIO()
-    pdf = SimpleDocTemplate(output, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
-   
-    styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(name='LegalTitle', fontName='Times-Bold', fontSize=16, alignment=1, spaceAfter=12))
-    styles.add(ParagraphStyle(name='LegalHeader', fontName='Times-Bold', fontSize=14, textColor=colors.HexColor('#2C3E50'), spaceAfter=10))
-    styles.add(ParagraphStyle(name='LegalBody', fontName='Helvetica', fontSize=12, spaceAfter=8))
-
-    elements = templates[template_name]["content"](data)
-    pdf.build(elements)
-    return output.getvalue()
-
 # Template documenti
 templates = {
     "Politica di Sicurezza": {
         "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "direttore_nome", "principi_sicurezza", "obiettivi_sicurezza", "ambiti_applicazione", "struttura_organizzativa", "misure_sicurezza", "responsabilita_sicurezza"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
             Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
@@ -1296,7 +1119,7 @@ templates = {
     },
     "Valutazione dei Rischi": {
         "fields": ["ragione_sociale", "data", "rischi_valutati", "azioni_mitigazione"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Paragraph("Valutazione dei Rischi", styles['LegalTitle']),
             Spacer(1, 12),
             Paragraph(f"Cliente: {data['ragione_sociale']}", styles['LegalBody']),
@@ -1318,7 +1141,7 @@ templates = {
     },
     "Piano Risposta Incidenti": {
         "fields": ["ragione_sociale", "ciso_nome", "data", "procedure_risposta", "responsabilita_risposta"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Paragraph("Piano di Risposta agli Incidenti", styles['LegalTitle']),
             Spacer(1, 12),
             Paragraph(f"Cliente: {data['ragione_sociale']}", styles['LegalBody']),
@@ -1330,7 +1153,7 @@ templates = {
     },
     "Nomina CISO": {
         "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
             Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
@@ -1360,8 +1183,7 @@ templates = {
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
                     ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
-                ])
-            ),
+                ])),
             Spacer(1, 12),
             Paragraph("DURATA E REVOCA", styles['LegalHeader']),
             Paragraph("La nomina ha durata indeterminata e può essere revocata con comunicazione scritta.", styles['LegalBody']),
@@ -1382,7 +1204,7 @@ templates = {
     },
     "Analisi e Classificazione": {
         "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "settore", "ruolo_supply_chain", "attivita_essenziali", "soggetto_essenziale", "motivazione_nis2", "filiali"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
             Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
@@ -1421,7 +1243,7 @@ templates = {
     },
     "Analisi e Gestione del Rischio": {
         "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "metodologia_analisi", "rischi", "piano_trattamento"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
             Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
@@ -1453,7 +1275,7 @@ templates = {
     },
     "Continuità Operativa": {
         "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita"],
-        "content": lambda data: [
+        "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
             Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
@@ -1478,7 +1300,20 @@ templates = {
         ]
     }
 }
+def _reportlab(template_name, data):
+    output = io.BytesIO()
+    pdf = SimpleDocTemplate(output, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+   
+    # Inizializza gli stili
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='LegalTitle', fontName='Times-Bold', fontSize=16, alignment=1, spaceAfter=12))
+    styles.add(ParagraphStyle(name='LegalHeader', fontName='Times-Bold', fontSize=14, textColor=colors.HexColor('#2C3E50'), spaceAfter=10))
+    styles.add(ParagraphStyle(name='LegalBody', fontName='Helvetica', fontSize=12, spaceAfter=8))
 
+    # Passa styles e data al template
+    elements = templates[template_name]["content"](data, styles)
+    pdf.build(elements)
+    return output.getvalue()
 # Sidebar di navigazione
 st.sidebar.title("Navigazione")
 if st.sidebar.button("Home"):
@@ -1602,77 +1437,99 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-                if field == "rischi" and template == "Analisi e Gestione del Rischio":
-                    st.subheader("Selezione Rischi")
-                    rischi_selezionati = []
-                    for categoria, minacce in RISCHI.items():
-                        st.subheader(categoria)
-                        for rischio in minacce:
-                            if st.checkbox(rischio, key=f"rischio_{rischio}_{template}"):
-                                impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
-                                probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
-                                note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
-                                rischi_selezionati.append({
-                                    "minaccia": rischio,
-                                    "impatto": impatto,
-                                    "probabilita": probabilita,
-                                    "note": note
-                                })
-                    st.session_state.template_data[template]["rischi"] = rischi_selezionati
-                elif field == "responsabilita" and template == "Nomina CISO":
-                    st.subheader("Selezione Responsabilità CISO")
-                    responsabilita_selezionate = []
-                    for resp in RESPONSABILITA_CISO:
-                        if st.checkbox(resp, key=f"resp_{resp}_{template}"):
-                            responsabilita_selezionate.append(resp)
-                    st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
-                elif field == "settore" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
-                elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
-                elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
-                elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
-                    st.subheader("Selezione Principi di Sicurezza")
-                    principi_selezionati = []
-                    for principio in PRINCIPI_SICUREZZA:
-                        if st.checkbox(principio, key=f"principio_{principio}_{template}"):
-                            principi_selezionati.append(principio)
-                    st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
-                elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
-                    st.subheader("Selezione Ambiti di Applicazione")
-                    ambiti_selezionati = []
-                    for ambito in AMBITI_APPLICAZIONE:
-                        if st.checkbox(ambito, key=f"ambito_{ambito}_{template}"):
-                            ambiti_selezionati.append(ambito)
-                    st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
-                elif field == "funzioni_critiche" and template == "Continuità Operativa":
-                    st.subheader("Selezione Funzioni Critiche")
-                    funzioni_selezionate = []
-                    for funzione in FUNZIONI_CRITICHE:
-                        if st.checkbox(funzione, key=f"funzione_{funzione}_{template}"):
-                            descrizione = st.text_input(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}")
-                            funzioni_selezionate.append(f"{funzione}: {descrizione}")
-                    st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
-                elif field == "strategie_continuita" and template == "Continuità Operativa":
-                    st.subheader("Selezione Strategie di Continuità")
-                    strategie_selezionate = []
-                    for strategia in STRATEGIE_CONTINUITA:
-                        if st.checkbox(strategia, key=f"strategia_{strategia}_{template}"):
-                            strategie_selezionate.append(strategia)
-                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
-                elif field == "procedure_recovery" and template == "Continuità Operativa":
-                    st.subheader("Selezione Procedure di Recovery")
-                    procedure_selezionate = []
-                    for procedura in PROCEDURE_RECOVERY:
-                        if st.checkbox(procedura, key=f"procedura_{procedura}_{template}"):
-                            procedure_selezionate.append(procedura)
-                    st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
-                elif field in st.session_state.cliente:
-                    st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
-                    st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
-                else:
-                    st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
+    if field == "rischi" and template == "Analisi e Gestione del Rischio":
+        st.subheader("Selezione Rischi")
+        if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
+            for categoria, minacce in RISCHI.items():
+                for rischio in minacce:
+                    st.session_state[f"rischio_{rischio}_{template}"] = True
+        rischi_selezionati = []
+        for categoria in sorted(RISCHI.keys()):
+            st.subheader(categoria)
+            for rischio in sorted(RISCHI[categoria]):
+                if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
+                    impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
+                    probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
+                    note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
+                    rischi_selezionati.append({
+                        "minaccia": rischio,
+                        "impatto": impatto,
+                        "probabilita": probabilita,
+                        "note": note
+                    })
+        st.session_state.template_data[template]["rischi"] = rischi_selezionati
+    elif field == "responsabilita" and template == "Nomina CISO":
+        st.subheader("Selezione Responsabilità CISO")
+        if st.button("Seleziona Tutte le Responsabilità", key=f"select_all_resp_{template}"):
+            for resp in RESPONSABILITA_CISO:
+                st.session_state[f"resp_{resp}_{template}"] = True
+        responsabilita_selezionate = []
+        for resp in sorted(RESPONSABILITA_CISO):
+            if st.checkbox(resp, key=f"resp_{resp}_{template}", value=st.session_state.get(f"resp_{resp}_{template}", False)):
+                responsabilita_selezionate.append(resp)
+        st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
+    elif field == "settore" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
+    elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
+    elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
+    elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
+        st.subheader("Selezione Principi di Sicurezza")
+        if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
+            for principio in PRINCIPI_SICUREZZA:
+                st.session_state[f"principio_{principio}_{template}"] = True
+        principi_selezionati = []
+        for principio in sorted(PRINCIPI_SICUREZZA):
+            if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
+                principi_selezionati.append(principio)
+        st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
+    elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
+        st.subheader("Selezione Ambiti di Applicazione")
+        if st.button("Seleziona Tutti gli Ambiti", key=f"select_all_ambiti_{template}"):
+            for ambito in AMBITI_APPLICAZIONE:
+                st.session_state[f"ambito_{ambito}_{template}"] = True
+        ambiti_selezionati = []
+        for ambito in sorted(AMBITI_APPLICAZIONE):
+            if st.checkbox(ambito, key=f"ambito_{ambito}_{template}", value=st.session_state.get(f"ambito_{ambito}_{template}", False)):
+                ambiti_selezionati.append(ambito)
+        st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
+    elif field == "funzioni_critiche" and template == "Continuità Operativa":
+        st.subheader("Selezione Funzioni Critiche")
+        if st.button("Seleziona Tutte le Funzioni", key=f"select_all_funzioni_{template}"):
+            for funzione in FUNZIONI_CRITICHE:
+                st.session_state[f"funzione_{funzione}_{template}"] = True
+        funzioni_selezionate = []
+        for funzione in sorted(FUNZIONI_CRITICHE):
+            if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
+                descrizione = st.text_input(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}")
+                funzioni_selezionate.append(f"{funzione}: {descrizione}")
+        st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
+    elif field == "strategie_continuita" and template == "Continuità Operativa":
+        st.subheader("Selezione Strategie di Continuità")
+        if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
+            for strategia in STRATEGIE_CONTINUITA:
+                st.session_state[f"strategia_{strategia}_{template}"] = True
+        strategie_selezionate = []
+        for strategia in sorted(STRATEGIE_CONTINUITA):
+            if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
+                strategie_selezionate.append(strategia)
+        st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
+    elif field == "procedure_recovery" and template == "Continuità Operativa":
+        st.subheader("Selezione Procedure di Recovery")
+        if st.button("Seleziona Tutte le Procedure", key=f"select_all_procedure_{template}"):
+            for procedura in PROCEDURE_RECOVERY:
+                st.session_state[f"procedura_{procedura}_{template}"] = True
+        procedure_selezionate = []
+        for procedura in sorted(PROCEDURE_RECOVERY):
+            if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
+                procedure_selezionate.append(procedura)
+        st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
+    elif field in st.session_state.cliente:
+        st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
+        st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
+    else:
+        st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
            
             col1, col2 = st.columns(2)
             with col1:
@@ -1696,7 +1553,7 @@ for template in templates:
                         responsabilita = data.get("responsabilita", [])
                         responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita) if isinstance(resp, str)])
                         data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
-                    st.session_state.pdf_data[template] = genera_pdf_reportlab(template, data)
+                    st.session_state.pdf_data[template] = _reportlab(template, data)
                     st.session_state.pdf_generated = template
                 except Exception as e:
                     st.error(f"Errore generazione documento: {str(e)}")
