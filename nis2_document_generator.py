@@ -1092,7 +1092,7 @@ Le responsabilità per l’esecuzione del piano sono assegnate come segue:
 # Template documenti
 templates = {
     "Politica di Sicurezza": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "direttore_nome", "principi_sicurezza", "obiettivi_sicurezza", "ambiti_applicazione", "struttura_organizzativa", "misure_sicurezza", "responsabilita_sicurezza"],
+        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "direttore_nome", "principi_sicurezza", "obiettivi_sicurezza", "ambiti_applicazione", "struttura_organizzativa", "misure_sicurezza", "responsabilita_sicurezza", "data_revisione"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1103,6 +1103,9 @@ templates = {
             Spacer(1, 12),
             Paragraph("APPROVAZIONE", styles['LegalHeader']),
             Paragraph(f"Approvata da {data['direttore_nome']} in data {data['data']}", styles['LegalBody']),
+            Spacer(1, 12),
+            Paragraph("DATA DI REVISIONE", styles['LegalHeader']),
+            Paragraph(f"{data['data_revisione']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("PRINCIPI DI SICUREZZA", styles['LegalHeader']),
             Paragraph(f"{data['principi_sicurezza']}", styles['LegalBody']),
@@ -1152,7 +1155,7 @@ templates = {
         ]
     },
     "Nomina CISO": {
-        "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita"],
+        "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita", "formazione_richiesta"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1184,6 +1187,9 @@ templates = {
                     ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
                 ])),
+            Spacer(1, 12),
+            Paragraph("FORMAZIONE RICHIESTA", styles['LegalHeader']),
+            Paragraph(f"{data['formazione_richiesta']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("DURATA E REVOCA", styles['LegalHeader']),
             Paragraph("La nomina ha durata indeterminata e può essere revocata con comunicazione scritta.", styles['LegalBody']),
@@ -1263,7 +1269,7 @@ templates = {
                     ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
                     ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
                     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
                     ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F5F5DC'))
@@ -1274,7 +1280,7 @@ templates = {
         ]
     },
     "Continuità Operativa": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita"],
+        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo"],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
@@ -1296,7 +1302,10 @@ templates = {
             Paragraph(f"{data['procedure_recovery']}", styles['LegalBody']),
             Spacer(1, 12),
             Paragraph("TEST E MANUTENZIONE", styles['LegalHeader']),
-            Paragraph(f"{data['test_manutenzione']}", styles['LegalBody'])
+            Paragraph(f"{data['test_manutenzione']}", styles['LegalBody']),
+            Spacer(1, 12),
+            Paragraph("RTO E RPO", styles['LegalHeader']),
+            Paragraph(f"{data['rto_rpo']}", styles['LegalBody'])
         ]
     }
 }
@@ -1437,77 +1446,99 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-                if field == "rischi" and template == "Analisi e Gestione del Rischio":
-                    st.subheader("Selezione Rischi")
-                    rischi_selezionati = []
-                    for categoria, minacce in RISCHI.items():
-                        st.subheader(categoria)
-                        for rischio in minacce:
-                            if st.checkbox(rischio, key=f"rischio_{rischio}_{template}"):
-                                impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
-                                probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
-                                note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
-                                rischi_selezionati.append({
-                                    "minaccia": rischio,
-                                    "impatto": impatto,
-                                    "probabilita": probabilita,
-                                    "note": note
-                                })
-                    st.session_state.template_data[template]["rischi"] = rischi_selezionati
-                elif field == "responsabilita" and template == "Nomina CISO":
-                    st.subheader("Selezione Responsabilità CISO")
-                    responsabilita_selezionate = []
-                    for resp in RESPONSABILITA_CISO:
-                        if st.checkbox(resp, key=f"resp_{resp}_{template}"):
-                            responsabilita_selezionate.append(resp)
-                    st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
-                elif field == "settore" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
-                elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
-                elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
-                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
-                elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
-                    st.subheader("Selezione Principi di Sicurezza")
-                    principi_selezionati = []
-                    for principio in PRINCIPI_SICUREZZA:
-                        if st.checkbox(principio, key=f"principio_{principio}_{template}"):
-                            principi_selezionati.append(principio)
-                    st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
-                elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
-                    st.subheader("Selezione Ambiti di Applicazione")
-                    ambiti_selezionati = []
-                    for ambito in AMBITI_APPLICAZIONE:
-                        if st.checkbox(ambito, key=f"ambito_{ambito}_{template}"):
-                            ambiti_selezionati.append(ambito)
-                    st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
-                elif field == "funzioni_critiche" and template == "Continuità Operativa":
-                    st.subheader("Selezione Funzioni Critiche")
-                    funzioni_selezionate = []
-                    for funzione in FUNZIONI_CRITICHE:
-                        if st.checkbox(funzione, key=f"funzione_{funzione}_{template}"):
-                            descrizione = st.text_input(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}")
-                            funzioni_selezionate.append(f"{funzione}: {descrizione}")
-                    st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
-                elif field == "strategie_continuita" and template == "Continuità Operativa":
-                    st.subheader("Selezione Strategie di Continuità")
-                    strategie_selezionate = []
-                    for strategia in STRATEGIE_CONTINUITA:
-                        if st.checkbox(strategia, key=f"strategia_{strategia}_{template}"):
-                            strategie_selezionate.append(strategia)
-                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
-                elif field == "procedure_recovery" and template == "Continuità Operativa":
-                    st.subheader("Selezione Procedure di Recovery")
-                    procedure_selezionate = []
-                    for procedura in PROCEDURE_RECOVERY:
-                        if st.checkbox(procedura, key=f"procedura_{procedura}_{template}"):
-                            procedure_selezionate.append(procedura)
-                    st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
-                elif field in st.session_state.cliente:
-                    st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
-                    st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
-                else:
-                    st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
+    if field == "rischi" and template == "Analisi e Gestione del Rischio":
+        st.subheader("Selezione Rischi")
+        if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
+            for categoria, minacce in RISCHI.items():
+                for rischio in minacce:
+                    st.session_state[f"rischio_{rischio}_{template}"] = True
+        rischi_selezionati = []
+        for categoria in sorted(RISCHI.keys()):
+            st.subheader(categoria)
+            for rischio in sorted(RISCHI[categoria]):
+                if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
+                    impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
+                    probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
+                    note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
+                    rischi_selezionati.append({
+                        "minaccia": rischio,
+                        "impatto": impatto,
+                        "probabilita": probabilita,
+                        "note": note
+                    })
+        st.session_state.template_data[template]["rischi"] = rischi_selezionati
+    elif field == "responsabilita" and template == "Nomina CISO":
+        st.subheader("Selezione Responsabilità CISO")
+        if st.button("Seleziona Tutte le Responsabilità", key=f"select_all_resp_{template}"):
+            for resp in RESPONSABILITA_CISO:
+                st.session_state[f"resp_{resp}_{template}"] = True
+        responsabilita_selezionate = []
+        for resp in sorted(RESPONSABILITA_CISO):
+            if st.checkbox(resp, key=f"resp_{resp}_{template}", value=st.session_state.get(f"resp_{resp}_{template}", False)):
+                responsabilita_selezionate.append(resp)
+        st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
+    elif field == "settore" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
+    elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
+    elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
+        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
+    elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
+        st.subheader("Selezione Principi di Sicurezza")
+        if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
+            for principio in PRINCIPI_SICUREZZA:
+                st.session_state[f"principio_{principio}_{template}"] = True
+        principi_selezionati = []
+        for principio in sorted(PRINCIPI_SICUREZZA):
+            if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
+                principi_selezionati.append(principio)
+        st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
+    elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
+        st.subheader("Selezione Ambiti di Applicazione")
+        if st.button("Seleziona Tutti gli Ambiti", key=f"select_all_ambiti_{template}"):
+            for ambito in AMBITI_APPLICAZIONE:
+                st.session_state[f"ambito_{ambito}_{template}"] = True
+        ambiti_selezionati = []
+        for ambito in sorted(AMBITI_APPLICAZIONE):
+            if st.checkbox(ambito, key=f"ambito_{ambito}_{template}", value=st.session_state.get(f"ambito_{ambito}_{template}", False)):
+                ambiti_selezionati.append(ambito)
+        st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
+    elif field == "funzioni_critiche" and template == "Continuità Operativa":
+        st.subheader("Selezione Funzioni Critiche")
+        if st.button("Seleziona Tutte le Funzioni", key=f"select_all_funzioni_{template}"):
+            for funzione in FUNZIONI_CRITICHE:
+                st.session_state[f"funzione_{funzione}_{template}"] = True
+        funzioni_selezionate = []
+        for funzione in sorted(FUNZIONI_CRITICHE):
+            if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
+                descrizione = st.text_input(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}")
+                funzioni_selezionate.append(f"{funzione}: {descrizione}")
+        st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
+    elif field == "strategie_continuita" and template == "Continuità Operativa":
+        st.subheader("Selezione Strategie di Continuità")
+        if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
+            for strategia in STRATEGIE_CONTINUITA:
+                st.session_state[f"strategia_{strategia}_{template}"] = True
+        strategie_selezionate = []
+        for strategia in sorted(STRATEGIE_CONTINUITA):
+            if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
+                strategie_selezionate.append(strategia)
+        st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
+    elif field == "procedure_recovery" and template == "Continuità Operativa":
+        st.subheader("Selezione Procedure di Recovery")
+        if st.button("Seleziona Tutte le Procedure", key=f"select_all_procedure_{template}"):
+            for procedura in PROCEDURE_RECOVERY:
+                st.session_state[f"procedura_{procedura}_{template}"] = True
+        procedure_selezionate = []
+        for procedura in sorted(PROCEDURE_RECOVERY):
+            if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
+                procedure_selezionate.append(procedura)
+        st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
+    elif field in st.session_state.cliente:
+        st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
+        st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
+    else:
+        st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
            
             col1, col2 = st.columns(2)
             with col1:
