@@ -1480,7 +1480,7 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-                elif field == "rischi" and template == "Analisi e Gestione del Rischio":
+                if field == "rischi" and template == "Analisi e Gestione del Rischio":
                     st.subheader("Selezione Rischi")
                     # Checkbox per selezionare tutti i rischi
                     select_all = st.checkbox("Seleziona tutti i rischi", key=f"select_all_rischi_{template}")
