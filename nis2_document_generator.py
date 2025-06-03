@@ -1511,8 +1511,10 @@ for template in templates:
         funzioni_selezionate = []
         for funzione in sorted(FUNZIONI_CRITICHE):
             if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
-                descrizione = st.text_input(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}")
-                funzioni_selezionate.append(f"{funzione}: {descrizione}")
+                descrizione = st.text_area(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}", value="Descrizione del processo critico.")
+                dipendenze = st.text_area(f"Dipendenze per {funzione} (es. sistemi, fornitori)", key=f"dip_{funzione}_{template}", value="Sistemi IT, fornitore X")
+                impatto = st.text_area(f"Impatto Interruzione per {funzione}", key=f"imp_{funzione}_{template}", value="Perdite economiche, danno reputazionale.")
+                funzioni_selezionate.append(f"{funzione}: {descrizione} (Dipendenze: {dipendenze}; Impatto: {impatto})")
         st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
     elif field == "strategie_continuita" and template == "Continuità Operativa":
         st.subheader("Selezione Strategie di Continuità")
@@ -1522,7 +1524,8 @@ for template in templates:
         strategie_selezionate = []
         for strategia in sorted(STRATEGIE_CONTINUITA):
             if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
-                strategie_selezionate.append(strategia)
+                descrizione = st.text_area(f"Descrizione per {strategia}", key=f"desc_strat_{strategia}_{template}", value="Dettagli sull'implementazione.")
+                strategie_selezionate.append(f"{strategia}: {descrizione}")
         st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
     elif field == "procedure_recovery" and template == "Continuità Operativa":
         st.subheader("Selezione Procedure di Recovery")
@@ -1532,8 +1535,27 @@ for template in templates:
         procedure_selezionate = []
         for procedura in sorted(PROCEDURE_RECOVERY):
             if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
-                procedure_selezionate.append(procedura)
+                dettagli = st.text_area(f"Dettagli per {procedura}", key=f"det_{procedura}_{template}", value="Passaggi specifici per il ripristino.")
+                procedure_selezionate.append(f"{procedura}: {dettagli}")
         st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
+    elif field == "rto_rpo" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("RTO e RPO", value="RTO: 4 ore per funzioni critiche; RPO: 2 ore per dati essenziali.", key=f"{field}_{template}")
+    elif field == "team_crisi" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Team di Gestione Crisi", value="CISO: Mario Rossi (mario.rossi@example.com); IT Manager: Luca Verdi (luca.verdi@example.com)", key=f"{field}_{template}")
+    elif field == "comunicazione_crisi" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Protocolli di Comunicazione", value="Notifica interna entro 1 ora tramite email; Notifica autorità entro 24 ore tramite portale dedicato; Comunicazione clienti entro 48 ore.", key=f"{field}_{template}")
+    elif field == "test_manutenzione" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Test e Manutenzione", value="Esercitazioni semestrali per simulare disastri; Revisione annuale del piano; Documentazione dei risultati dei test.", key=f"{field}_{template}")
+    elif field == "contatti_emergenza" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Contatti di Emergenza", value="CISO: mario.rossi@example.com, +39 123 456 789; IT Manager: luca.verdi@example.com, +39 987 654 321; Fornitore Backup: backup@example.com", key=f"{field}_{template}")
+    elif field == "ambito_applicazione" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Ambito di Applicazione", value="Sistemi IT, infrastrutture fisiche, sedi operative principali.", key=f"{field}_{template}")
+    elif field == "riferimenti_normativi" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Riferimenti Normativi", value="Direttiva (UE) 2022/2555 (NIS2); ISO 22301:2019; GDPR (Regolamento UE 2016/679); D.lgs. 65/2018.", key=f"{field}_{template}")
+    elif field == "responsabile_piano" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_input("Responsabile del Piano", value="Mario Rossi, CISO", key=f"{field}_{template}")
+    elif field == "supply_chain" and template == "Continuità Operativa":
+        st.session_state.template_data[template][field] = st.text_area("Gestione Supply Chain", value="Fornitore critico: Backup Ltd, contratto SLA con ripristino in 4 ore; Fornitore rete: NetCorp, supporto 24/7.", key=f"{field}_{template}")
     elif field in st.session_state.cliente:
         st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
         st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
