@@ -1379,11 +1379,9 @@ for template in templates:
 # Home: Inserimento dati cliente
 if st.session_state.step == "Home":
     st.header("Dati Cliente")
-   
     clienti = load_clienti()
     cliente_nomi = [c["ragione_sociale"] for c in clienti if c["ragione_sociale"]]
     cliente_nomi.insert(0, "Nuovo Cliente")
-   
     with st.form("seleziona_cliente"):
         selected_cliente = st.selectbox("Seleziona Cliente", cliente_nomi)
         submit_select = st.form_submit_button("Carica Dati")
@@ -1393,7 +1391,6 @@ if st.session_state.step == "Home":
                     st.session_state.cliente = cliente
                     st.success(f"Dati di {selected_cliente} caricati.")
                     break
-
     with st.form("dati_cliente"):
         st.session_state.cliente["ragione_sociale"] = st.text_input("Ragione Sociale", value=st.session_state.cliente["ragione_sociale"])
         st.session_state.cliente["contatto"] = st.text_input("Contatto (email)", value=st.session_state.cliente["contatto"])
@@ -1439,10 +1436,8 @@ elif st.session_state.step == "Rischi":
       - **I (Integrità)**: Protegge da modifiche non autorizzate.
       - **D (Disponibilità)**: Garantisce accesso ai dati.
     """)
-   
     df_rischi = pd.DataFrame(st.session_state.rischi)
     st.dataframe(df_rischi)
-   
     with st.form("aggiungi_rischio"):
         st.subheader("Aggiungi/Modifica Rischio")
         minaccia = st.text_input("Minaccia", help="Es. Incendio, Intercettazione")
@@ -1466,7 +1461,6 @@ elif st.session_state.step == "Checklist":
     st.header("Checklist Requisiti")
     df_checklist = pd.DataFrame(st.session_state.checklist)
     st.dataframe(df_checklist)
-   
     with st.form("aggiorna_checklist"):
         st.subheader("Aggiorna Stato Controllo")
         controllo = st.selectbox("Seleziona Controllo", [c["controllo"] for c in st.session_state.checklist])
@@ -1480,7 +1474,6 @@ elif st.session_state.step == "Checklist":
             st.success(f"Stato di '{controllo}' aggiornato.")
 
 # Sezioni template
-# Sezioni template
 for template in templates:
     if st.session_state.step == template:
         st.header(template)
@@ -1493,115 +1486,121 @@ for template in templates:
                         for categoria, minacce in RISCHI.items():
                             for rischio in minacce:
                                 st.session_state[f"rischio_{rischio}_{template}"] = True
-        rischi_selezionati = []
-        for categoria in sorted(RISCHI.keys()):
-            st.subheader(categoria)
-            for rischio in sorted(RISCHI[categoria]):
-                if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
-                    impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
-                    probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
-                    note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
-                    rischi_selezionati.append({
-                        "minaccia": rischio,
-                        "impatto": impatto,
-                        "probabilita": probabilita,
-                        "note": note
-                    })
-        st.session_state.template_data[template]["rischi"] = rischi_selezionati
-    elif field == "responsabilita" and template == "Nomina CISO":
-        st.subheader("Selezione Responsabilità CISO")
-        if st.button("Seleziona Tutte le Responsabilità", key=f"select_all_resp_{template}"):
-            for resp in RESPONSABILITA_CISO:
-                st.session_state[f"resp_{resp}_{template}"] = True
-        responsabilita_selezionate = []
-        for resp in sorted(RESPONSABILITA_CISO):
-            if st.checkbox(resp, key=f"resp_{resp}_{template}", value=st.session_state.get(f"resp_{resp}_{template}", False)):
-                responsabilita_selezionate.append(resp)
-        st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
-    elif field == "settore" and template == "Analisi e Classificazione":
-        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
-    elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
-        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
-    elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
-        st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
-    elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
-        st.subheader("Selezione Principi di Sicurezza")
-        if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
-            for principio in PRINCIPI_SICUREZZA:
-                st.session_state[f"principio_{principio}_{template}"] = True
-        principi_selezionati = []
-        for principio in sorted(PRINCIPI_SICUREZZA):
-            if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
-                principi_selezionati.append(principio)
-        st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
-    elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
-        st.subheader("Selezione Ambiti di Applicazione")
-        if st.button("Seleziona Tutti gli Ambiti", key=f"select_all_ambiti_{template}"):
-            for ambito in AMBITI_APPLICAZIONE:
-                st.session_state[f"ambito_{ambito}_{template}"] = True
-        ambiti_selezionati = []
-        for ambito in sorted(AMBITI_APPLICAZIONE):
-            if st.checkbox(ambito, key=f"ambito_{ambito}_{template}", value=st.session_state.get(f"ambito_{ambito}_{template}", False)):
-                ambiti_selezionati.append(ambito)
-        st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
-    elif field == "funzioni_critiche" and template == "Continuità Operativa":
-        st.subheader("Selezione Funzioni Critiche")
-        if st.button("Seleziona Tutte le Funzioni", key=f"select_all_funzioni_{template}"):
-            for funzione in FUNZIONI_CRITICHE:
-                st.session_state[f"funzione_{funzione}_{template}"] = True
-        funzioni_selezionate = []
-        for funzione in sorted(FUNZIONI_CRITICHE):
-            if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
-                descrizione = st.text_area(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}", value="Descrizione dettagliata del processo critico e del suo ruolo nell'organizzazione.")
-                dipendenze = st.text_area(f"Dipendenze per {funzione} (es. sistemi, fornitori)", key=f"dip_{funzione}_{template}", value="Sistemi IT (es. server principale), fornitore X per servizi cloud.")
-                impatto = st.text_area(f"Impatto Interruzione per {funzione}", key=f"imp_{funzione}_{template}", value="Perdite economiche stimate a €10,000/ora, danno reputazionale, rischio normativo.")
-                funzioni_selezionate.append(f"{funzione}: {descrizione} (Dipendenze: {dipendenze}; Impatto: {impatto})")
-        st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
-    elif field == "strategie_continuita" and template == "Continuità Operativa":
-        st.subheader("Selezione Strategie di Continuità")
-        if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
-            for strategia in STRATEGIE_CONTINUITA:
-                st.session_state[f"strategia_{strategia}_{template}"] = True
-        strategie_selezionate = []
-        for strategia in sorted(STRATEGIE_CONTINUITA):
-            if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
-                descrizione = st.text_area(f"Descrizione per {strategia}", key=f"desc_strat_{strategia}_{template}", value="Dettagli sull'implementazione della strategia, incluse risorse e tempistiche.")
-                strategie_selezionate.append(f"{strategia}: {descrizione}")
-        st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
-    elif field == "procedure_recovery" and template == "Continuità Operativa":
-        st.subheader("Selezione Procedure di Recovery")
-        if st.button("Seleziona Tutte le Procedure", key=f"select_all_procedure_{template}"):
-            for procedura in PROCEDURE_RECOVERY:
-                st.session_state[f"procedura_{procedura}_{template}"] = True
-        procedure_selezionate = []
-        for procedura in sorted(PROCEDURE_RECOVERY):
-            if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
-                dettagli = st.text_area(f"Dettagli per {procedura}", key=f"det_{procedura}_{template}", value="Passaggi specifici per il ripristino, inclusi ruoli responsabili e strumenti utilizzati.")
-                procedure_selezionate.append(f"{procedura}: {dettagli}")
-        st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
-    elif field == "rto_rpo" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("RTO e RPO", value="RTO: 4 ore per funzioni critiche; RPO: 2 ore per dati essenziali.", key=f"{field}_{template}")
-    elif field == "team_crisi" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Team di Gestione Crisi", value="CISO: Mario Rossi (mario.rossi@example.com); IT Manager: Luca Verdi (luca.verdi@example.com)", key=f"{field}_{template}")
-    elif field == "comunicazione_crisi" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Protocolli di Comunicazione", value="Notifica interna entro 1 ora tramite email; Notifica autorità entro 24 ore tramite portale dedicato; Comunicazione clienti entro 48 ore.", key=f"{field}_{template}")
-    elif field == "test_manutenzione" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Test e Manutenzione", value="Esercitazioni semestrali per simulare disastri; Revisione annuale del piano; Documentazione dei risultati dei test.", key=f"{field}_{template}")
-    elif field == "contatti_emergenza" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Contatti di Emergenza", value="CISO: mario.rossi@example.com, +39 123 456 789; IT Manager: luca.verdi@example.com, +39 987 654 321; Fornitore Backup: backup@example.com", key=f"{field}_{template}")
-    elif field == "ambito_applicazione" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Ambito di Applicazione", value="Sistemi IT, infrastrutture fisiche, sedi operative principali.", key=f"{field}_{template}")
-    elif field == "riferimenti_normativi" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Riferimenti Normativi", value="Direttiva (UE) 2022/2555 (NIS2); ISO 22301:2019; GDPR (Regolamento UE 2016/679); D.lgs. 65/2018.", key=f"{field}_{template}")
-    elif field == "responsabile_piano" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_input("Responsabile del Piano", value="Mario Rossi, CISO", key=f"{field}_{template}")
-    elif field == "supply_chain" and template == "Continuità Operativa":
-        st.session_state.template_data[template][field] = st.text_area("Gestione Supply Chain", value="Fornitore critico: Backup Ltd, contratto SLA con ripristino in 4 ore; Fornitore rete: NetCorp, supporto 24/7.", key=f"{field}_{template}")
-    elif field in st.session_state.cliente:
-        st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
-        st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
-    else:
-        st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
+                    rischi_selezionati = []
+                    for categoria in sorted(RISCHI.keys()):
+                        st.subheader(categoria)
+                        for rischio in sorted(RISCHI[categoria]):
+                            if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
+                                impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
+                                probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
+                                note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
+                                rischi_selezionati.append({
+                                    "minaccia": rischio,
+                                    "impatto": impatto,
+                                    "probabilita": probabilita,
+                                    "note": note
+                                })
+                    st.session_state.template_data[template]["rischi"] = rischi_selezionati
+                elif field == "responsabilita" and template == "Nomina CISO":
+                    st.subheader("Selezione Responsabilità CISO")
+                    if st.button("Seleziona Tutte le Responsabilità", key=f"select_all_resp_{template}"):
+                        for resp in RESPONSABILITA_CISO:
+                            st.session_state[f"resp_{resp}_{template}"] = True
+                    responsabilita_selezionate = []
+                    for resp in sorted(RESPONSABILITA_CISO):
+                        if st.checkbox(resp, key=f"resp_{resp}_{template}", value=st.session_state.get(f"resp_{resp}_{template}", False)):
+                            responsabilita_selezionate.append(resp)
+                    st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
+                elif field == "settore" and template == "Analisi e Classificazione":
+                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
+                elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
+                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), RUOLI_SUPPLY_CHAIN, key=f"{field}_{template}")
+                elif field == "soggetto_essenziale" and template == "Analisi e Classificazione":
+                    st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
+                elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
+                    st.subheader("Selezione Principi di Sicurezza")
+                    if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
+                        for principio in PRINCIPI_SICUREZZA:
+                            st.session_state[f"principio_{principio}_{template}"] = True
+                    principi_selezionati = []
+                    for principio in sorted(PRINCIPI_SICUREZZA):
+                        if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
+                            principi_selezionati.append(principio)
+                    st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
+                elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
+                    st.subheader("Selezione Ambiti di Applicazione")
+                    if st.button("Seleziona Tutti gli Ambiti", key=f"select_all_ambiti_{template}"):
+                        for ambito in AMBITI_APPLICAZIONE:
+                            st.session_state[f"ambito_{ambito}_{template}"] = True
+                    ambiti_selezionati = []
+                    for ambito in sorted(AMBITI_APPLICAZIONE):
+                        if st.checkbox(ambito, key=f"ambito_{ambito}_{template}", value=st.session_state.get(f"ambito_{ambito}_{template}", False)):
+                            ambiti_selezionati.append(ambito)
+                    st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
+                elif field == "funzioni_critiche" and template == "Continuità Operativa":
+                    st.subheader("Selezione Funzioni Critiche")
+                    if st.button("Seleziona Tutte le Funzioni", key=f"select_all_funzioni_{template}"):
+                        for funzione in FUNZIONI_CRITICHE:
+                            st.session_state[f"funzione_{funzione}_{template}"] = True
+                    funzioni_selezionate = []
+                    for funzione in sorted(FUNZIONI_CRITICHE):
+                        if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
+                            descrizione = st.text_area(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}", value="Descrizione dettagliata del processo critico e del suo ruolo nell'organizzazione.")
+                            dipendenze = st.text_area(f"Dipendenze per {funzione} (es. sistemi, fornitori)", key=f"dip_{funzione}_{template}", value="Sistemi IT (es. server principale), fornitore X per servizi cloud.")
+                            impatto = st.text_area(f"Impatto Interruzione per {funzione}", key=f"imp_{funzione}_{template}", value="Perdite economiche stimate a €10,000/ora, danno reputazionale, rischio normativo.")
+                            funzioni_selezionate.append(f"{funzione}: {descrizione} (Dipendenze: {dipendenze}; Impatto: {impatto})")
+                    st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
+                elif field == "strategie_continuita" and template == "Continuità Operativa":
+                    st.subheader("Selezione Strategie di Continuità")
+                    if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
+                        for strategia in STRATEGIE_CONTINUITA:
+                            st.session_state[f"strategia_{strategia}_{template}"] = True
+                    strategie_selezionate = []
+                    for strategia in sorted(STRATEGIE_CONTINUITA):
+                        if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
+                            descrizione = st.text_area(f"Descrizione per {strategia}", key=f"desc_strat_{strategia}_{template}", value="Dettagli sull'implementazione della strategia, incluse risorse e tempistiche.")
+                            strategie_selezionate.append(f"{strategia}: {descrizione}")
+                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
+                elif field == "procedure_recovery" and template == "Continuità Operativa":
+                    st.subheader("Selezione Procedure di Recovery")
+                    if st.button("Seleziona Tutte le Procedure", key=f"select_all_procedure_{template}"):
+                        for procedura in PROCEDURE_RECOVERY:
+                            st.session_state[f"procedura_{procedura}_{template}"] = True
+                    procedure_selezionate = []
+                    for procedura in sorted(PROCEDURE_RECOVERY):
+                        if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
+                            dettagli = st.text_area(f"Dettagli per {procedura}", key=f"det_{procedura}_{template}", value="Passaggi specifici per il ripristino, inclusi ruoli responsabili e strumenti utilizzati.")
+                            procedure_selezionate.append(f"{procedura}: {dettagli}")
+                    st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
+                elif field == "rto_rpo" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("RTO e RPO", value="RTO: 4 ore per funzioni critiche; RPO: 2 ore per dati essenziali.", key=f"{field}_{template}")
+                elif field == "team_crisi" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Team di Gestione Crisi", value="CISO: Mario Rossi (mario.rossi@example.com); IT Manager: Luca Verdi (luca.verdi@example.com)", key=f"{field}_{template}")
+                elif field == "comunicazione_crisi" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Protocolli di Comunicazione", value="Notifica interna entro 1 ora tramite email; Notifica autorità entro 24 ore tramite portale dedicato; Comunicazione clienti entro 48 ore.", key=f"{field}_{template}")
+                elif field == "test_manutenzione" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Test e Manutenzione", value="Esercitazioni semestrali per simulare disastri; Revisione annuale del piano; Documentazione dei risultati dei test.", key=f"{field}_{template}")
+                elif field == "contatti_emergenza" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Contatti di Emergenza", value="CISO: mario.rossi@example.com, +39 123 456 789; IT Manager: luca.verdi@example.com, +39 987 654 321; Fornitore Backup: backup@example.com", key=f"{field}_{template}")
+                elif field == "ambito_applicazione" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Ambito di Applicazione", value="Sistemi IT, infrastrutture fisiche, sedi operative principali.", key=f"{field}_{template}")
+                elif field == "riferimenti_normativi" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Riferimenti Normativi", value="Direttiva (UE) 2022/2555 (NIS2); ISO 22301:2019; GDPR (Regolamento UE 2016/679); D.lgs. 65/2018.", key=f"{field}_{template}")
+                elif field == "responsabile_piano" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_input("Responsabile del Piano", value="Mario Rossi", key=f"{field}_{template}")
+                elif field == "supply_chain" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Gestione Supply Chain", value="Fornitore critico: Backup Ltd, contratto SLA con ripristino in 4 ore; Fornitore rete: NetCorp, supporto 24/7.", key=f"{field}_{template}")
+                elif field == "procedure_ripristino" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Procedure di Ripristino", value="Procedure dettagliate per il ripristino dei servizi critici.", key=f"{field}_{template}")
+                elif field == "responsabilita_continuita" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Responsabilità Continuità", value="Assegnazione dei ruoli per l’esecuzione del piano.", key=f"{field}_{template}")
+                elif field == "obiettivi_piano" and template == "Continuità Operativa":
+                    st.session_state.template_data[template][field] = st.text_area("Obiettivi del Piano", value="Garantire la continuità operativa e minimizzare i tempi di inattività.", key=f"{field}_{template}")
+                elif field in st.session_state.cliente:
+                    st.session_state.template_data[template][field] = st.session_state.cliente.get(field, "")
+                    st.write(f"{field.replace('_', ' ').title()}: {st.session_state.template_data[template][field]}")
+                else:
+                    st.session_state.template_data[template][field] = st.text_input(field.replace('_', ' ').title(), value=st.session_state.template_data[template].get(field, ""))
            
             col1, col2 = st.columns(2)
             with col1:
@@ -1620,11 +1619,14 @@ for template in templates:
                         "ciso_nome": st.session_state.cliente.get("ciso_nome", ""),
                         "ciso_codice_fiscale": st.session_state.cliente.get("ciso_codice_fiscale", "")
                     })
-                    # Genera la tabella delle responsabilità per Nomina CISO
                     if template == "Nomina CISO":
                         responsabilita = data.get("responsabilita", [])
                         responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita) if isinstance(resp, str)])
                         data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
+                    if template == "Analisi e Gestione del Rischio":
+                        rischi = data.get("rischi", [])
+                        rischi_tabella = "\n".join([f"{sanitize_latex(r['minaccia'])} & {sanitize_latex(r['impatto'])} & {sanitize_latex(r['probabilita'])} & {sanitize_latex(calcola_livello_rischio(r['impatto'], r['probabilita']))} & {sanitize_latex(r.get('note', ''))} \\\\" for r in rischi])
+                        data["rischi_tabella"] = rischi_tabella if rischi else "Nessun rischio selezionato \\\\"
                     st.session_state.pdf_data[template] = _reportlab(template, data)
                     st.session_state.pdf_generated = template
                 except Exception as e:
@@ -1636,33 +1638,34 @@ for template in templates:
 
         if st.session_state.download and template in templates:
             try:
-                if st.session_state.latex_content:
-                    latex_content = st.session_state.latex_content
-                else:
-                    template_obj = Template({
-                        "Nomina CISO": NOMINA_CISO_TEMPLATE,
-                        "Analisi e Classificazione": ANALISI_CLASSIFICAZIONE_TEMPLATE,
-                        "Politica di Sicurezza": POLITICA_SICUREZZA_TEMPLATE,
-                        "Analisi e Gestione del Rischio": RISK_ASSESSMENT_TEMPLATE,
-                        "Continuità Operativa": CONTINUITA_OPERATIVA_TEMPLATE,
-                        "Verifica di Sicurezza": VERIFICA_SICUREZZA_TEMPLATE,
-                        "Piano Risposta Incidenti": PIANO_RISPOSTA_INCIDENTI_TEMPLATE,
-                        "Valutazione dei Rischi": VALUTAZIONE_RISCHI_TEMPLATE
-                    }[template])
-                    data = st.session_state.template_data[template].copy()
-                    data.update({
-                        "ragione_sociale": st.session_state.cliente.get("ragione_sociale", ""),
-                        "sede_legale": st.session_state.cliente.get("sede_legale", ""),
-                        "p_iva": st.session_state.cliente.get("p_iva", ""),
-                        "data": st.session_state.cliente.get("data", time.strftime("%d/%m/%Y")),
-                        "ciso_nome": st.session_state.cliente.get("ciso_nome", ""),
-                        "ciso_codice_fiscale": st.session_state.cliente.get("ciso_codice_fiscale", "")
-                    })
-                    if template == "Nomina CISO":
-                        responsabilita = data.get("responsabilita", [])
-                        responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita) if isinstance(resp, str)])
-                        data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
-                    latex_content = template_obj.safe_substitute({k: sanitize_latex(v) if isinstance(v, str) else v for k, v in data.items()})
+                template_obj = Template({
+                    "Nomina CISO": NOMINA_CISO_TEMPLATE,
+                    "Analisi e Classificazione": ANALISI_CLASSIFICAZIONE_TEMPLATE,
+                    "Politica di Sicurezza": POLITICA_SICUREZZA_TEMPLATE,
+                    "Analisi e Gestione del Rischio": RISK_ASSESSMENT_TEMPLATE,
+                    "Continuità Operativa": CONTINUITA_OPERATIVA_TEMPLATE,
+                    "Verifica di Sicurezza": VERIFICA_SICUREZZA_TEMPLATE,
+                    "Piano Risposta Incidenti": PIANO_RISPOSTA_INCIDENTI_TEMPLATE,
+                    "Valutazione dei Rischi": VALUTAZIONE_RISCHI_TEMPLATE
+                }[template])
+                data = st.session_state.template_data[template].copy()
+                data.update({
+                    "ragione_sociale": st.session_state.cliente.get("ragione_sociale", ""),
+                    "sede_legale": st.session_state.cliente.get("sede_legale", ""),
+                    "p_iva": st.session_state.cliente.get("p_iva", ""),
+                    "data": st.session_state.cliente.get("data", time.strftime("%d/%m/%Y")),
+                    "ciso_nome": st.session_state.cliente.get("ciso_nome", ""),
+                    "ciso_codice_fiscale": st.session_state.cliente.get("ciso_codice_fiscale", "")
+                })
+                if template == "Nomina CISO":
+                    responsabilita = data.get("responsabilita", [])
+                    responsabilita_tabella = "\n".join([f"{i+1} & {sanitize_latex(resp)} \\\\" for i, resp in enumerate(responsabilita) if isinstance(resp, str)])
+                    data["responsabilita_tabella"] = responsabilita_tabella if responsabilita else "Nessuna responsabilità selezionata \\\\"
+                if template == "Analisi e Gestione del Rischio":
+                    rischi = data.get("rischi", [])
+                    rischi_tabella = "\n".join([f"{sanitize_latex(r['minaccia'])} & {sanitize_latex(r['impatto'])} & {sanitize_latex(r['probabilita'])} & {sanitize_latex(calcola_livello_rischio(r['impatto'], r['probabilita']))} & {sanitize_latex(r.get('note', ''))} \\\\" for r in rischi])
+                    data["rischi_tabella"] = rischi_tabella if rischi else "Nessun rischio selezionato \\\\"
+                latex_content = template_obj.safe_substitute({k: sanitize_latex(v) if isinstance(v, str) else v for k, v in data.items()})
                 st.download_button(
                     label="Scarica File .tex",
                     data=latex_content,
