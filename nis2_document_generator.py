@@ -71,7 +71,7 @@ if 'step' not in st.session_state:
         {"minaccia": "Furto di documenti", "verosimiglianza": "2", "parametri": "R", "rischio": "24", "mitigazione": ""}
     ]
     st.session_state.checklist = [
-        {"controllo": "Politiche per la sicurezza delle informazioni", "valore": "1", "rischio": "9", "stato": "Non iniziato"},
+        {"controllo": "Politiche di sicurezza delle informazioni", "valore": "1", "rischio": "9", "stato": "Non iniziato"},
         {"controllo": "Nomina CISO", "valore": "3", "rischio": "18", "stato": "Non iniziato"},
         {"controllo": "Piano di risposta agli incidenti", "valore": "1", "rischio": "36", "stato": "Non iniziato"}
     ]
@@ -103,7 +103,7 @@ def save_clienti(clienti):
 st.markdown("<div class='header-logo'>", unsafe_allow_html=True)
 logo_path = "nis2lab_logo.png"
 if os.path.exists(logo_path):
-    st.image(logo_path, width=250)
+    st.image(logo_path, width=50)
 else:
     st.markdown("<h1 style='color: #2C3E50;'>NIS2Lab</h1>", unsafe_allow_html=True)
     logging.warning("Logo nis2lab_logo.png non trovato nel percorso specificato")
@@ -147,7 +147,7 @@ def sanitize_latex(text):
 # Elenco predefinito di rischi
 RISCHI = {
     "Danni fisici": [
-        "Incendio", "Allagazione", "Polvere, corrosione, congelamento",
+        "Incendio", "Allagamento", "Polvere, corrosione, congelamento",
         "Distruzione di strumentazione da parte di malintenzionati o per errore",
         "Attacchi (bombe, terroristi)"
     ],
@@ -191,7 +191,8 @@ RISCHI = {
         "Divulgazione o riuso per finalità diverse dei dati personali",
         "Conservazione immotivamente prolungata dei dati personali",
         "Inesattezza o mancato aggiornamento dei dati personali",
-        "Violazione dei dati personali", "Trasferimento dati personali extra UE senza garanzie"
+        "Violazione delle istruzioni ricevute in materia di dati personali",
+        "Trasferimento dati personali extra UE senza garanzie"
     ],
     "Direzione": [
         "Mancanza di impegno della direzione", "Mancanza di investimenti e di risorse nel SG",
@@ -202,7 +203,7 @@ RISCHI = {
         "Nuovi obblighi di origine normativa o legislativa"
     ],
     "Rapporto con i clienti": [
-        "Inadeguato recepimento delle esigenze dei clienti", "Inadeguatezza delle offerte rispetto ai clienti"
+        "Inadeguato recepimento delle esigenze dei clienti", "Inadeguatezza delle offerte rispetto alle esigenze dei clienti"
     ],
     "Monitoraggio": ["Monitoraggi inadeguati"],
     "Esercizio": [
@@ -731,7 +732,7 @@ Le seguenti procedure sono definite per la gestione degli incidenti:
 
 % Responsabilità
 \section*{Responsabilità}
-\color{black}
+\color{bluscuro}
 \noindent
 Le responsabilità per la gestione degli incidenti sono assegnate come segue:
 
