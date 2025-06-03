@@ -1280,7 +1280,14 @@ templates = {
         ]
     },
     "Continuità Operativa": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo", "team_crisi", "comunicazione_crisi", "contatti_emergenza", "ambito_applicazione", "riferimenti_normativi", "responsabile_piano", "supply_chain"],
+        "fields": [
+            "ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano",
+            "funzioni_critiche", "strategie_continuita", "procedure_recovery",
+            "test_manutenzione", "procedure_ripristino", "responsabilita_continuita",
+            "rto_rpo", "team_crisi", "comunicazione_crisi", "contatti_emergenza",
+            "ambito_applicazione", "riferimenti_normativi", "responsabile_piano",
+            "supply_chain"
+        ],
         "content": lambda data, styles: [
             Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
             Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
