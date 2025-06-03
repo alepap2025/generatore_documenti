@@ -1480,9 +1480,11 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-                if field == "rischi" and template == "Analisi e Gestione del Rischio":
+                elif field == "rischi" and template == "Analisi e Gestione del Rischio":
                     st.subheader("Selezione Rischi")
-                    if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
+                    # Checkbox per selezionare tutti i rischi
+                    select_all = st.checkbox("Seleziona tutti i rischi", key=f"select_all_rischi_{template}")
+                    if select_all:
                         for categoria, minacce in RISCHI.items():
                             for rischio in minacce:
                                 st.session_state[f"rischio_{rischio}_{template}"] = True
@@ -1490,27 +1492,50 @@ for template in templates:
                     for categoria in sorted(RISCHI.keys()):
                         st.subheader(categoria)
                         for rischio in sorted(RISCHI[categoria]):
-                            if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
-                                impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
-                                probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
-                                note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
+                            checked = st.checkbox(
+                                rischio,
+                                key=f"rischio_{rischio}_{template}",
+                                value=st.session_state.get(f"rischio_{rischio}_{template}", select_all)
+                            )
+                            if checked:
+                                impatto = st.selectbox(
+                                    f"Impatto per {rischio}",
+                                    ["Basso", "Medio", "Alto", "Critico"],
+                                    key=f"impatto_{rischio}_{template}"
+                                )
+                                probabilita = st.selectbox(
+                                    f"Probabilità per {rischio}",
+                                    ["Bassa", "Media", "Alta"],
+                                    key=f"probabilita_{rischio}_{template}"
+                                )
+                                note = st.text_input(
+                                    f"Note per {rischio}",
+                                    key=f"note_{rischio}_{template}"
+                                )
                                 rischi_selezionati.append({
                                     "minaccia": rischio,
                                     "impatto": impatto,
                                     "probabilita": probabilita,
                                     "note": note
                                 })
-                    st.session_state.template_data[template]["rischi"] = rischi_selezionati
+                    st.session_state.template_data[template][field] = rischi_selezionati
                 elif field == "responsabilita" and template == "Nomina CISO":
                     st.subheader("Selezione Responsabilità CISO")
-                    if st.button("Seleziona Tutte le Responsabilità", key=f"select_all_resp_{template}"):
+                    # Checkbox per selezionare tutte le responsabilità
+                    select_all = st.checkbox("Seleziona tutte le responsabilità", key=f"select_all_resp_{template}")
+                    if select_all:
                         for resp in RESPONSABILITA_CISO:
                             st.session_state[f"resp_{resp}_{template}"] = True
                     responsabilita_selezionate = []
                     for resp in sorted(RESPONSABILITA_CISO):
-                        if st.checkbox(resp, key=f"resp_{resp}_{template}", value=st.session_state.get(f"resp_{resp}_{template}", False)):
+                        checked = st.checkbox(
+                            resp,
+                            key=f"resp_{resp}_{template}",
+                            value=st.session_state.get(f"resp_{resp}_{template}", select_all)
+                        )
+                        if checked:
                             responsabilita_selezionate.append(resp)
-                    st.session_state.template_data[template]["responsabilita"] = responsabilita_selezionate
+                    st.session_state.template_data[template][field] = responsabilita_selezionate
                 elif field == "settore" and template == "Analisi e Classificazione":
                     st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SETTORI, key=f"{field}_{template}")
                 elif field == "ruolo_supply_chain" and template == "Analisi e Classificazione":
@@ -1519,12 +1544,19 @@ for template in templates:
                     st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
                 elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
                     st.subheader("Selezione Principi di Sicurezza")
-                    if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
+                    # Checkbox per selezionare tutti i principi
+                    select_all = st.checkbox("Seleziona tutti i principi", key=f"select_all_principi_{template}")
+                    if select_all:
                         for principio in PRINCIPI_SICUREZZA:
                             st.session_state[f"principio_{principio}_{template}"] = True
                     principi_selezionati = []
                     for principio in sorted(PRINCIPI_SICUREZZA):
-                        if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
+                        checked = st.checkbox(
+                            principio,
+                            key=f"principio_{principio}_{template}",
+                            value=st.session_state.get(f"principio_{principio}_{template}", select_all)
+                        )
+                        if checked:
                             principi_selezionati.append(principio)
                     st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
                 elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
