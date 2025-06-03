@@ -315,6 +315,7 @@ NOMINA_CISO_TEMPLATE = r"""
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{colortbl}
+\usepackage{enumitem}
 
 \geometry{margin=2cm}
 \pagestyle{fancy}
@@ -353,20 +354,22 @@ NOMINA_CISO_TEMPLATE = r"""
 \noindent
 \textbf{VISTO:}
 \begin{itemize}
-    \item La Direttiva (UE) 2022/2555 del Parlamento europeo e del Consiglio del 14 dicembre 2022 (NIS2), che impone misure per un livello elevato di cibersicurezza nell’Unione;
-    \item Il Regolamento (UE) 2016/679 (GDPR), relativo alla protezione dei dati personali;
-    \item Il Decreto Legislativo 30 giugno 2003, n. 196, come modificato dal D.lgs. 101/2018, recante il Codice in materia di protezione dei dati personali;
-    \item Il Decreto Legislativo 82/2005 (Codice dell’Amministrazione Digitale), articolo 51, sulla sicurezza dei dati e delle infrastrutture;
-    \item La Strategia nazionale di cybersicurezza 2022-2026, adottata con DPCM del 17 maggio 2022;
-    \item La norma UNI 11621-4:2024, che definisce i requisiti per il Responsabile della Sicurezza Informatica;
-    \item La necessità di garantire la tutela del patrimonio informativo aziendale e la continuità dei servizi.
+    \item La Direttiva (UE) 2022/2555 del Parlamento europeo e del Consiglio del 14 dicembre 2022 (NIS2), che stabilisce misure per garantire un livello comune elevato di cibersicurezza nell'Unione Europea, con particolare riferimento all'articolo 21 che richiede la designazione di un responsabile per la sicurezza informatica;
+    \item Il Regolamento (UE) 2016/679 del 27 aprile 2016 (GDPR), relativo alla protezione delle persone fisiche con riguardo al trattamento dei dati personali, che sottolinea l'importanza della sicurezza dei dati;
+    \item Il Decreto Legislativo 30 giugno 2003, n. 196, aggiornato dal D.lgs. 101/2018, recante il Codice in materia di protezione dei dati personali, che impone obblighi di sicurezza per i dati trattati;
+    \item Il Decreto Legislativo 7 marzo 2005, n. 82 (Codice dell’Amministrazione Digitale), articolo 51, che disciplina la sicurezza dei dati e delle infrastrutture digitali;
+    \item La Strategia nazionale di cybersicurezza 2022-2026, adottata con DPCM del 17 maggio 2022, che promuove la resilienza cyber delle organizzazioni italiane;
+    \item La norma UNI CEI EN ISO/IEC 27001:2017, che definisce i requisiti per un sistema di gestione della sicurezza delle informazioni;
+    \item La norma UNI 11621-4:2024, che specifica i requisiti professionali per il Responsabile della Sicurezza Informatica (CISO);
+    \item Il Decreto Legislativo 18 maggio 2018, n. 65, che recepisce la Direttiva NIS (UE) 2016/1148, stabilendo misure per la sicurezza delle reti e dei sistemi informativi;
+    \item La necessità di \detokenize{${ragione_sociale}} di rafforzare la governance della sicurezza informatica per proteggere il patrimonio informativo aziendale e garantire la continuità operativa.
 \end{itemize}
 
 \noindent
 \textbf{RITENUTO:}
 \begin{itemize}
-    \item Che la nomina di un Responsabile della Sicurezza Informatica (CISO) è necessaria per adempiere agli obblighi normativi e rafforzare la governance di sicurezza;
-    \item Che il Sig./la Sig.ra \detokenize{${ciso_nome}}, codice fiscale \detokenize{${ciso_codice_fiscale}}, possiede le competenze richieste per il ruolo, in conformità alla norma UNI 11621-4:2024.
+    \item Che la nomina di un Responsabile della Sicurezza Informatica (CISO) è indispensabile per adempiere agli obblighi normativi e per implementare un sistema di gestione della sicurezza efficace;
+    \item Che il Sig./la Sig.ra \detokenize{${ciso_nome}}, codice fiscale \detokenize{${ciso_codice_fiscale}}, possiede le competenze, l’esperienza e le qualifiche necessarie per svolgere il ruolo di CISO, in conformità alla norma UNI 11621-4:2024 e ai requisiti di \detokenize{${ragione_sociale}}.
 \end{itemize}
 
 \vspace{0.5cm}
@@ -375,67 +378,122 @@ NOMINA_CISO_TEMPLATE = r"""
 \section*{Oggetto}
 \color{black}
 \noindent
-\begin{flushleft}
-    Con il presente atto, \detokenize{${ragione_sociale}}, con sede legale in \detokenize{${sede_legale}}, P.IVA \detokenize{${p_iva}}, nomina formalmente il Sig./la Sig.ra \textbf{\detokenize{${ciso_nome}}}, codice fiscale \detokenize{${ciso_codice_fiscale}}, come Responsabile della Sicurezza Informatica (CISO), ai sensi dell’articolo 21 della Direttiva NIS2.
-\end{flushleft}
+Con il presente atto, \detokenize{${ragione_sociale}}, con sede legale in \detokenize{${sede_legale}}, P.IVA \detokenize{${p_iva}}, nomina formalmente il Sig./la Sig.ra \textbf{\detokenize{${ciso_nome}}}, codice fiscale \detokenize{${ciso_codice_fiscale}}, come Responsabile della Sicurezza Informatica (CISO), ai sensi dell’articolo 21 della Direttiva (UE) 2022/2555 (NIS2). Il CISO avrà il compito di sovrintendere alla gestione della sicurezza informatica aziendale, garantendo la conformità normativa e la protezione dei sistemi critici.
 
 \vspace{0.5cm}
 
-% Responsabilità
-\section*{Responsabilità del CISO}
+% Ruolo del CISO
+\section*{Ruolo del CISO}
 \color{bluscuro}
 \noindent
-Il CISO avrà le seguenti responsabilità, selezionate per l’organizzazione:
+Il Responsabile della Sicurezza Informatica (CISO) è una figura chiave nella governance della sicurezza di \detokenize{${ragione_sociale}}. Il CISO opera a livello strategico e operativo, collaborando con la direzione aziendale per definire e implementare politiche di sicurezza, gestire i rischi informatici e garantire la resilienza dei sistemi critici. Il ruolo include il coordinamento con le autorità nazionali (es. Agenzia per la Cybersicurezza Nazionale, ACN) e la supervisione delle attività di risposta agli incidenti, formazione del personale e monitoraggio delle minacce. Il CISO è responsabile della conformità alle normative nazionali ed europee, promuovendo una cultura della sicurezza all’interno dell’organizzazione.
+
+\vspace{0.5cm}
+
+% Responsabilità del CISO
+\section*{Responsabilità del CISO}
+\color{black}
+\noindent
+Il CISO avrà le seguenti responsabilità, ciascuna accompagnata da attività specifiche per garantire la sicurezza informatica di \detokenize{${ragione_sociale}}:
 
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.5cm}>{\raggedright\arraybackslash}X}
     \toprule
-    \textbf{N.} & \textbf{Responsabilità} \\
+    \textbf{N.} & \textbf{Responsabilità e Descrizione} \\
     \midrule
-    \detokenize{${responsabilita_tabella}} \\
+    1 & \textbf{Definizione politiche di sicurezza}: Sviluppo e aggiornamento delle politiche di sicurezza informatica, in linea con ISO/IEC 27001 e NIS2. Include la redazione di procedure per la gestione degli accessi, la protezione dei dati e la risposta agli incidenti. \\
+    2 & \textbf{Gestione rischi informatici}: Conduzione di valutazioni dei rischi (risk assessment) per identificare minacce e vulnerabilità, definendo piani di mitigazione basati su metodologie come ISO/IEC 27005. \\
+    3 & \textbf{Monitoraggio minacce}: Implementazione di sistemi di threat intelligence per rilevare e analizzare minacce cyber in tempo reale, collaborando con CSIRT Italia per aggiornamenti su vulnerabilità critiche. \\
+    4 & \textbf{Protezione dati}: Garanzia della conformità al GDPR e al D.lgs. 196/2003, attraverso misure tecniche e organizzative per prevenire violazioni dei dati personali. \\
+    5 & \textbf{Risposta agli incidenti}: Coordinamento delle attività di gestione degli incidenti cyber, inclusa la notifica entro 24 ore all’ACN come previsto dalla NIS2, e redazione di report post-incidente. \\
+    6 & \textbf{Formazione personale}: Organizzazione di programmi di formazione obbligatoria per il personale su sicurezza informatica, phishing e best practice, con esercitazioni annuali. \\
+    7 & \textbf{Collaborazione con autorità}: Interazione con l’Agenzia per la Cybersicurezza Nazionale e altre autorità competenti per segnalazioni, ispezioni e conformità normativa. \\
+    8 & \textbf{Conformità normativa}: Supervisione degli adempimenti normativi, inclusi NIS2, GDPR, D.lgs. 65/2018 e norme UNI, con redazione di documentazione di conformità. \\
+    9 & \textbf{Sicurezza supply chain}: Valutazione della sicurezza dei fornitori critici, includendo clausole di cybersecurity nei contratti e audit periodici. \\
+    10 & \textbf{Gestione budget sicurezza}: Pianificazione e allocazione del budget per soluzioni di sicurezza, formazione e test di resilienza, con report annuali alla direzione. \\
+    11 & \textbf{Resilienza sistemi critici}: Progettazione di piani di continuità operativa e disaster recovery, in linea con ISO 22301, per garantire la disponibilità dei sistemi essenziali. \\
+    12 & \textbf{Threat intelligence}: Utilizzo di piattaforme di threat intelligence per anticipare attacchi cyber, con analisi delle tendenze globali e locali. \\
+    13 & \textbf{Certificazioni sicurezza}: Gestione del processo per ottenere e mantenere certificazioni come ISO/IEC 27001 e UNI 11621-4, con audit interni regolari. \\
+    14 & \textbf{Penetration testing}: Organizzazione di test di penetrazione annuali per identificare vulnerabilità nei sistemi IT, con remediation plan. \\
+    15 & \textbf{Cultura della sicurezza}: Promozione di una cultura aziendale orientata alla sicurezza, attraverso campagne di sensibilizzazione e coinvolgimento della direzione. \\
     \bottomrule
 \end{tabularx}
 
 \vspace{0.5cm}
 
-% Competenze
+% Competenze del CISO
 \section*{Competenze del CISO}
 \color{bluscuro}
 \noindent
-Il CISO possiede le seguenti competenze, in conformità alla norma UNI 11621-4:2024:
+Il CISO possiede le seguenti competenze professionali, validate in conformità alla norma UNI 11621-4:2024 e al framework e-CF (European e-Competence Framework):
 
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{6.5cm}>{\raggedright\arraybackslash}X}
     \toprule
-    \textbf{Competenza} & \textbf{Livello e-CF} \\
+    \textbf{Competenza} & \textbf{Livello e-CF e Descrizione} \\
     \midrule
-    Sviluppo della Strategia della Sicurezza Informatica & 5 \\
-    Gestione del Rischio & 4 \\
-    Gestione della Sicurezza dell’Informazione & 4 \\
-    Miglioramento del Processo & 4 \\
-    Gestione del Progetto e del Portfolio & 4 \\
+    Sviluppo della Strategia della Sicurezza Informatica & Livello 5: Definizione di una visione strategica per la sicurezza, allineata agli obiettivi aziendali e normativi. \\
+    Gestione del Rischio & Livello 4: Conduzione di analisi dei rischi e implementazione di misure di mitigazione efficaci. \\
+    Gestione della Sicurezza dell’Informazione & Livello 4: Supervisione dei sistemi di gestione della sicurezza (es. ISO/IEC 27001). \\
+    Miglioramento del Processo & Livello 4: Ottimizzazione dei processi di sicurezza attraverso audit e feedback continuo. \\
+    Gestione del Progetto e del Portfolio & Livello 4: Pianificazione e coordinamento di progetti di sicurezza complessi, con gestione delle risorse. \\
+    Comunicazione e Leadership & Livello 4: Capacità di comunicare efficacemente con stakeholder interni ed esterni, guidando team multidisciplinari. \\
     \bottomrule
 \end{tabularx}
 
 \vspace{0.5cm}
 
-% Durata e revoca
-\section*{Durata e Revoca}
+% Obblighi del CISO
+\section*{Obblighi del CISO}
 \color{black}
 \noindent
-La nomina ha durata indeterminata e può essere revocata con decisione del rappresentante legale di \detokenize{${ragione_sociale}}, previa comunicazione scritta al nominato con preavviso di 30 giorni.
+Il CISO è tenuto a:
+\begin{itemize}
+    \item Riferire trimestralmente alla direzione aziendale sull’andamento delle attività di sicurezza e sugli incidenti rilevati.
+    \item Garantire la conformità continua alle normative NIS2, GDPR e altre leggi applicabili, con documentazione aggiornata.
+    \item Collaborare con l’Agenzia per la Cybersicurezza Nazionale (ACN) e il CSIRT Italia per la gestione degli incidenti e la condivisione di informazioni sulle minacce.
+    \item Supervisionare l’implementazione di misure tecniche e organizzative per la protezione dei dati personali e dei sistemi critici.
+    \item Condurre almeno un’esercitazione annuale di risposta agli incidenti, coinvolgendo il personale chiave.
+\end{itemize}
 
 \vspace{0.5cm}
 
-% Disposizioni finali
-\section*{Disposizioni Finali}
+% Collaborazione con autorità
+\section*{Collaborazione con le Autorità}
+\color{bluscuro}
+\noindent
+Il CISO rappresenta il punto di contatto primario con le autorità competenti, inclusa l’Agenzia per la Cybersicurezza Nazionale (ACN). Le attività includono:
+\begin{itemize}
+    \item Notifica di incidenti significativi entro 24 ore, come previsto dall’articolo 23 della Direttiva NIS2, tramite il portale dedicato dell’ACN.
+    \item Partecipazione a ispezioni e audit normativi, fornendo documentazione completa sulla conformità.
+    \item Collaborazione con il CSIRT Italia per l’analisi delle minacce e la risposta coordinata agli incidenti cyber.
+    \item Adesione alle linee guida e raccomandazioni emesse dall’ACN per migliorare la resilienza cyber.
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Durata e Revoca
+\section*{Durata e Revoca}
 \color{black}
 \noindent
-Il presente atto entra in vigore in data \detokenize{${data}}. Il Sig./la Sig.ra \detokenize{${ciso_nome}} accetta formalmente la nomina apponendo la propria firma. Il presente documento sarà trasmesso per conoscenza agli organi interni competenti e pubblicato, se richiesto, secondo le normative vigenti.
+La nomina del CISO ha durata indeterminata, salvo revoca da parte del rappresentante legale di \detokenize{${ragione_sociale}}. La revoca può avvenire per giusta causa (es. inadempimento grave) o per decisione strategica, con comunicazione scritta al CISO e preavviso di 30 giorni. In caso di revoca, il CISO è tenuto a consegnare tutta la documentazione relativa alla sicurezza informatica e a collaborare per il passaggio di consegne.
+
+\vspace{0.5cm}
+
+% Disposizioni Finali
+\section*{Disposizioni Finali}
+\color{bluscuro}
+\noindent
+Il presente atto entra in vigore in data \detokenize{${data}}. Il Sig./la Sig.ra \detokenize{${ciso_nome}} accetta formalmente la nomina apponendo la propria firma. Il documento sarà:
+\begin{itemize}
+    \item Trasmesso per conoscenza agli organi interni competenti (es. consiglio di amministrazione).
+    \item Conservato negli archivi aziendali per almeno 5 anni, come previsto dalle normative.
+    \item Pubblicato, se richiesto, in conformità alle disposizioni normative vigenti.
+\end{itemize}
 
 \vspace{1cm}
 
 % Firme
 \section*{Firme}
-\color{bluscuro}
+\color{black}
 \begin{tabularx}{\textwidth}{XX}
     \hline
     \textbf{Rappresentante Legale} & \textbf{\detokenize{${ciso_nome}} (CISO)} \\
