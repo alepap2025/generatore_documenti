@@ -993,7 +993,7 @@ Il piano di trattamento del rischio include le seguenti misure:
 """
 
 # Template LaTeX per Continuità Operativa
-CONTINUITA_OPERATIVA_TEMPLATE = r"""
+CONTINUITA_OPERATIVA_TEMPLATE = """
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
