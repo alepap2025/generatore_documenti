@@ -1572,26 +1572,27 @@ for template in templates:
                     st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
                 elif field == "strategie_continuita" and template == "Continuità Operativa":
                     st.subheader("Selezione Strategie di Continuità")
-                    if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
+                    # Checkbox per selezionare tutte le strategie
+                    select_all = st.checkbox("Seleziona tutte le strategie", key=f"select_all_strategie_{template}")
+                    if select_all:
                         for strategia in STRATEGIE_CONTINUITA:
                             st.session_state[f"strategia_{strategia}_{template}"] = True
                     strategie_selezionate = []
                     for strategia in sorted(STRATEGIE_CONTINUITA):
-                        if st.checkbox(strategia, key=f"strategia_{strategia}_{template}", value=st.session_state.get(f"strategia_{strategia}_{template}", False)):
-                            descrizione = st.text_area(f"Descrizione per {strategia}", key=f"desc_strat_{strategia}_{template}", value="Dettagli sull'implementazione della strategia, incluse risorse e tempistiche.")
+                        # Checkbox per ogni strategia, con valore preimpostato se "Seleziona tutte" è attivo
+                        checked = st.checkbox(
+                            strategia,
+                            key=f"strategia_{strategia}_{template}",
+                            value=st.session_state.get(f"strategia_{strategia}_{template}", select_all)
+                        )
+                        if checked:
+                            descrizione = st.text_area(
+                                f"Descrizione per {strategia}",
+                                key=f"desc_strat_{strategia}_{template}",
+                                value="Dettagli sull'implementazione della strategia, incluse risorse e tempistiche."
+                            )
                             strategie_selezionate.append(f"{strategia}: {descrizione}")
-                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate)
-                elif field == "procedure_recovery" and template == "Continuità Operativa":
-                    st.subheader("Selezione Procedure di Recovery")
-                    if st.button("Seleziona Tutte le Procedure", key=f"select_all_procedure_{template}"):
-                        for procedura in PROCEDURE_RECOVERY:
-                            st.session_state[f"procedura_{procedura}_{template}"] = True
-                    procedure_selezionate = []
-                    for procedura in sorted(PROCEDURE_RECOVERY):
-                        if st.checkbox(procedura, key=f"procedura_{procedura}_{template}", value=st.session_state.get(f"procedura_{procedura}_{template}", False)):
-                            dettagli = st.text_area(f"Dettagli per {procedura}", key=f"det_{procedura}_{template}", value="Passaggi specifici per il ripristino, inclusi ruoli responsabili e strumenti utilizzati.")
-                            procedure_selezionate.append(f"{procedura}: {dettagli}")
-                    st.session_state.template_data[template][field] = "; ".join(procedure_selezionate)
+                    st.session_state.template_data[template][field] = "; ".join(strategie_selezionate))
                 elif field == "rto_rpo" and template == "Continuità Operativa":
                     st.session_state.template_data[template][field] = st.text_area("RTO e RPO", value="RTO: 4 ore per funzioni critiche; RPO: 2 ore per dati essenziali.", key=f"{field}_{template}")
                 elif field == "team_crisi" and template == "Continuità Operativa":
