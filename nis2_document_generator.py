@@ -1213,59 +1213,101 @@ templates = {
         ]
     },
     "Nomina CISO": {
-        "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita", "formazione_richiesta"],
-        "content": lambda data, styles: [
-            Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
-            Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
-            Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
-            Paragraph(f"P.IVA: {data['p_iva']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("Atto di Nomina del Responsabile della Sicurezza Informatica (CISO)", styles['LegalTitle']),
-            Spacer(1, 12),
-            Paragraph("PREMESSO CHE", styles['LegalHeader']),
-            Paragraph("- La Direttiva (UE) 2022/2555 (NIS2) impone l’adozione di misure per la gestione dei rischi di sicurezza informatica;", styles['LegalBody']),
-            Paragraph("- L’articolo 21 della Direttiva NIS2 richiede la designazione di un CISO;", styles['LegalBody']),
-            Paragraph("- Il Regolamento (UE) 2016/679 (GDPR) sottolinea la protezione dei dati personali;", styles['LegalBody']),
-            Paragraph(f"- {data['ragione_sociale']} intende rafforzare la governance di sicurezza;", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("OGGETTO", styles['LegalHeader']),
-            Paragraph(f"Con il presente atto, {data['ragione_sociale']}, con sede legale in {data['sede_legale']}, P.IVA {data['p_iva']}, nomina il Sig./la Sig.ra {data['ciso_nome']}, codice fiscale {data['ciso_codice_fiscale']}, come CISO.", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("RESPONSABILITÀ DEL CISO", styles['LegalHeader']),
-            Paragraph("Il CISO avrà le seguenti responsabilità:", styles['LegalBody']),
-            Table(
-                [["N.", "Responsabilità"]] + [[str(i+1), resp] for i, resp in enumerate(data.get("responsabilita", []))],
-                colWidths=[50, 400],
-                style=TableStyle([
-                    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-                    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                    ('FONTSIZE', (0, 0), (-1, -1), 10),
-                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                    ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
-                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
-                ])),
-            Spacer(1, 12),
-            Paragraph("FORMAZIONE RICHIESTA", styles['LegalHeader']),
-            Paragraph(f"{data['formazione_richiesta']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("DURATA E REVOCA", styles['LegalHeader']),
-            Paragraph("La nomina ha durata indeterminata e può essere revocata con comunicazione scritta.", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("DISPOSIZIONI FINALI", styles['LegalHeader']),
-            Paragraph(f"Il presente atto entra in vigore in data {data['data']}.", styles['LegalBody']),
-            Spacer(1, 24),
-            Paragraph("FIRME", styles['LegalHeader']),
-            Table([
-                ["______________________________", "______________________________"],
-                ["Rappresentante Legale", f"{data['ciso_nome']} (CISO)"]
-            ], colWidths=[225, 225], style=TableStyle([
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    "fields": ["ragione_sociale", "ciso_nome", "ciso_codice_fiscale", "data", "sede_legale", "p_iva", "responsabilita", "formazione_richiesta"],
+    "content": lambda data, styles: [
+        Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
+        Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
+        Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
+        Paragraph(f"P.IVA: {data['p_iva']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("Atto di Nomina del Responsabile della Sicurezza Informatica (CISO)", styles['LegalTitle']),
+        Spacer(1, 12),
+        Paragraph("PREMESSO CHE", styles['LegalHeader']),
+        Paragraph("- La Direttiva (UE) 2022/2555 (NIS2) stabilisce misure per un livello elevato di cibersicurezza, richiedendo la designazione di un CISO (articolo 21);", styles['LegalBody']),
+        Paragraph("- Il Regolamento (UE) 2016/679 (GDPR) sottolinea la protezione dei dati personali;", styles['LegalBody']),
+        Paragraph("- Il D.lgs. 196/2003, aggiornato dal D.lgs. 101/2018, impone obblighi di sicurezza per i dati;", styles['LegalBody']),
+        Paragraph("- Il D.lgs. 82/2005, articolo 51, disciplina la sicurezza delle infrastrutture digitali;", styles['LegalBody']),
+        Paragraph("- La Strategia nazionale di cybersicurezza 2022-2026 promuove la resilienza cyber;", styles['LegalBody']),
+        Paragraph("- La norma UNI 11621-4:2024 definisce i requisiti per il CISO;", styles['LegalBody']),
+        Paragraph(f"- {data['ragione_sociale']} intende rafforzare la governance di sicurezza;", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("RITENUTO CHE", styles['LegalHeader']),
+        Paragraph("- La nomina di un CISO è indispensabile per la conformità normativa;", styles['LegalBody']),
+        Paragraph(f"- Il Sig./la Sig.ra {data['ciso_nome']} possiede le competenze richieste;", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("OGGETTO", styles['LegalHeader']),
+        Paragraph(f"Con il presente atto, {data['ragione_sociale']}, con sede legale in {data['sede_legale']}, P.IVA {data['p_iva']}, nomina il Sig./la Sig.ra {data['ciso_nome']}, codice fiscale {data['ciso_codice_fiscale']}, come CISO.", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("RUOLO DEL CISO", styles['LegalHeader']),
+        Paragraph(f"Il CISO di {data['ragione_sociale']} sovrintende alla sicurezza informatica, definendo politiche, gestendo rischi e garantendo conformità normativa.", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("RESPONSABILITÀ DEL CISO", styles['LegalHeader']),
+        Table(
+            [["N.", "Responsabilità", "Descrizione"]] + [
+                [str(i+1), resp, {
+                    "Certificazioni sicurezza": "Gestione di certificazioni ISO/IEC 27001 e UNI 11621-4.",
+                    "Collaborazione con autorità": "Interazione con ACN e CSIRT Italia per conformità.",
+                    "Conformità normativa": "Supervisione degli adempimenti NIS2 e GDPR.",
+                    "Cultura della sicurezza": "Promozione di campagne di sensibilizzazione.",
+                    "Definizione politiche di sicurezza": "Sviluppo di politiche in linea con ISO/IEC 27001.",
+                    "Formazione personale": "Organizzazione di corsi annuali su cybersecurity.",
+                    "Gestione budget sicurezza": "Pianificazione delle risorse per la sicurezza.",
+                    "Gestione rischi informatici": "Valutazione dei rischi con ISO/IEC 27005.",
+                    "Monitoraggio minacce": "Uso di threat intelligence per rilevare minacce.",
+                    "Penetration testing": "Test annuali per identificare vulnerabilità.",
+                    "Protezione dati": "Conformità al GDPR per la sicurezza dei dati.",
+                    "Resilienza sistemi critici": "Piani di continuità operativa con ISO 22301.",
+                    "Risposta agli incidenti": "Coordinamento e notifica incidenti entro 24 ore.",
+                    "Sicurezza supply chain": "Audit dei fornitori critici.",
+                    "Threat intelligence": "Analisi delle tendenze cyber globali."
+                }.get(resp, "")] for i, resp in enumerate(data.get("responsabilita", []))
+            ],
+            colWidths=[50, 150, 250],
+            style=TableStyle([
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
                 ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-                ('FONTSIZE', (0, 0), (-1, -1), 10)
-            ]))
-        ]
-    },
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+                ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2C3E50')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
+            ])),
+        Spacer(1, 12),
+        Paragraph("FORMAZIONE RICHIESTA", styles['LegalHeader']),
+        Paragraph(f"{data['formazione_richiesta']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("COMPETENZE DEL CISO", styles['LegalHeader']),
+        Table([
+            ["Competenza", "Livello e-CF"],
+            ["Strategia di sicurezza", "Livello 5"],
+            ["Gestione del rischio", "Livello 4"],
+            ["Sicurezza delle informazioni", "Livello 4"],
+            ["Miglioramento processi", "Livello 4"],
+            ["Gestione progetti", "Livello 4"]
+        ], colWidths=[300, 150], style=TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
+        ])),
+        Spacer(1, 12),
+        Paragraph("DURATA E REVOCA", styles['LegalHeader']),
+        Paragraph("La nomina ha durata indeterminata e può essere revocata con preavviso di 30 giorni.", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("DISPOSIZIONI FINALI", styles['LegalHeader']),
+        Paragraph(f"Il presente atto entra in vigore in data {data['data']}.", styles['LegalBody']),
+        Spacer(1, 24),
+        Paragraph("FIRME", styles['LegalHeader']),
+        Table([
+            ["______________________________", "______________________________"],
+            ["Rappresentante Legale", f"{data['ciso_nome']} (CISO)"]
+        ], colWidths=[225, 225], style=TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10)
+        ]))
+    ]
+},
     "Analisi e Classificazione": {
         "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "settore", "ruolo_supply_chain", "attivita_essenziali", "soggetto_essenziale", "motivazione_nis2", "filiali"],
         "content": lambda data, styles: [
