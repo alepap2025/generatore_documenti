@@ -1480,27 +1480,45 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-                if field == "rischi" and template == "Analisi e Gestione del Rischio":
-                    st.subheader("Selezione Rischi")
-                    if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
-                        for categoria, minacce in RISCHI.items():
-                            for rischio in minacce:
-                                st.session_state[f"rischio_{rischio}_{template}"] = True
-                    rischi_selezionati = []
-                    for categoria in sorted(RISCHI.keys()):
-                        st.subheader(categoria)
-                        for rischio in sorted(RISCHI[categoria]):
-                            if st.checkbox(rischio, key=f"rischio_{rischio}_{template}", value=st.session_state.get(f"rischio_{rischio}_{template}", False)):
-                                impatto = st.selectbox(f"Impatto per {rischio}", ["Basso", "Medio", "Alto", "Critico"], key=f"impatto_{rischio}_{template}")
-                                probabilita = st.selectbox(f"Probabilità per {rischio}", ["Bassa", "Media", "Alta"], key=f"probabilita_{rischio}_{template}")
-                                note = st.text_input(f"Note per {rischio}", key=f"note_{rischio}_{template}")
-                                rischi_selezionati.append({
-                                    "minaccia": rischio,
-                                    "impatto": impatto,
-                                    "probabilita": probabilita,
-                                    "note": note
-                                })
-                    st.session_state.template_data[template]["rischi"] = rischi_selezionati
+            elif field == "rischi" and template == "Analisi e Gestione del Rischio":
+                st.subheader("Selezione Rischi")
+                # Checkbox per selezionare tutti i rischi
+                select_all = st.checkbox("Seleziona tutti i rischi", key=f"select_all_rischi_{template}")
+                if select_all:
+                    for categoria, minacce in RISCHI.items():
+                        for rischio in minacce:
+                            st.session_state[f"rischio_{rischio}_{template}"] = True
+                rischi_selezionati = []
+                for categoria in sorted(RISCHI.keys()):
+                    st.subheader(categoria)
+                    for rischio in sorted(RISCHI[categoria]):
+                        checked = st.checkbox(
+                            rischio,
+                            key=f"rischio_{rischio}_{template}",
+                            value=st.session_state.get(f"rischio_{rischio}_{template}", select_all)
+                        )
+                        if checked:
+                            impatto = st.selectbox(
+                                f"Impatto per {rischio}",
+                                ["Basso", "Medio", "Alto", "Critico"],
+                                key=f"impatto_{rischio}_{template}"
+                            )
+                            probabilita = st.selectbox(
+                                f"Probabilità per {rischio}",
+                                ["Bassa", "Media", "Alta"],
+                                key=f"probabilita_{rischio}_{template}"
+                            )
+                            note = st.text_input(
+                                f"Note per {rischio}",
+                                key=f"note_{rischio}_{template}"
+                            )
+                            rischi_selezionati.append({
+                                "minaccia": rischio,
+                                "impatto": impatto,
+                                "probabilita": probabilita,
+                                "note": note
+                            })
+                st.session_state.template_data[template][field] = rischi_selezionati
                 elif field == "responsabilita" and template == "Nomina CISO":
                     st.subheader("Selezione Responsabilità CISO")
                     # Checkbox per selezionare tutte le responsabilità
