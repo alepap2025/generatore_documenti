@@ -503,7 +503,7 @@ Il presente atto entra in vigore in data \detokenize{${data}}. Il Sig./la Sig.ra
 \end{document}
 """
 
-# Template LaTeX per Documento di analisi e classificazione
+# Template LaTeX per Documento di analisi e classificazione t
 ANALISI_CLASSIFICAZIONE_TEMPLATE = r"""
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
