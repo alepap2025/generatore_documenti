@@ -1348,7 +1348,7 @@ templates = {
             Paragraph("16. APPENDICE: GLOSSARIO", styles['LegalHeader']),
             Paragraph("RTO (Recovery Time Objective): Tempo massimo accettabile di inattività per una funzione critica.\nRPO (Recovery Point Objective): Quantità massima di dati che l'organizzazione può permettersi di perdere.\nBIA (Business Impact Analysis): Analisi per identificare le funzioni critiche e valutare l'impatto delle interruzioni.", styles['LegalBody'])
         ]
-    }
+    },
 }
 
 def _reportlab(template_name, data):
