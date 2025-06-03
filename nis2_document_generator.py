@@ -1487,12 +1487,12 @@ for template in templates:
         with st.form(f"form_{template}"):
             st.session_state.template_data[template] = st.session_state.template_data.get(template, {})
             for field in templates[template]["fields"]:
-    if field == "rischi" and template == "Analisi e Gestione del Rischio":
-        st.subheader("Selezione Rischi")
-        if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
-            for categoria, minacce in RISCHI.items():
-                for rischio in minacce:
-                    st.session_state[f"rischio_{rischio}_{template}"] = True
+                if field == "rischi" and template == "Analisi e Gestione del Rischio":
+                    st.subheader("Selezione Rischi")
+                    if st.button("Seleziona Tutti i Rischi", key=f"select_all_rischi_{template}"):
+                        for categoria, minacce in RISCHI.items():
+                            for rischio in minacce:
+                                st.session_state[f"rischio_{rischio}_{template}"] = True
         rischi_selezionati = []
         for categoria in sorted(RISCHI.keys()):
             st.subheader(categoria)
