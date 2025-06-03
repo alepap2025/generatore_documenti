@@ -1538,18 +1538,38 @@ for template in templates:
                             ambiti_selezionati.append(ambito)
                     st.session_state.template_data[template][field] = "; ".join(ambiti_selezionati)
                 elif field == "funzioni_critiche" and template == "Continuità Operativa":
-                    st.subheader("Selezione Funzioni Critiche")
-                    if st.button("Seleziona Tutte le Funzioni", key=f"select_all_funzioni_{template}"):
-                        for funzione in FUNZIONI_CRITICHE:
-                            st.session_state[f"funzione_{funzione}_{template}"] = True
-                    funzioni_selezionate = []
-                    for funzione in sorted(FUNZIONI_CRITICHE):
-                        if st.checkbox(funzione, key=f"funzione_{funzione}_{template}", value=st.session_state.get(f"funzione_{funzione}_{template}", False)):
-                            descrizione = st.text_area(f"Descrizione per {funzione}", key=f"desc_{funzione}_{template}", value="Descrizione dettagliata del processo critico e del suo ruolo nell'organizzazione.")
-                            dipendenze = st.text_area(f"Dipendenze per {funzione} (es. sistemi, fornitori)", key=f"dip_{funzione}_{template}", value="Sistemi IT (es. server principale), fornitore X per servizi cloud.")
-                            impatto = st.text_area(f"Impatto Interruzione per {funzione}", key=f"imp_{funzione}_{template}", value="Perdite economiche stimate a €10,000/ora, danno reputazionale, rischio normativo.")
-                            funzioni_selezionate.append(f"{funzione}: {descrizione} (Dipendenze: {dipendenze}; Impatto: {impatto})")
-                    st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
+    st.subheader("Selezione Funzioni Critiche")
+    # Checkbox per selezionare tutte le funzioni
+    select_all = st.checkbox("Seleziona tutte le funzioni", key=f"select_all_funzioni_{template}")
+    if select_all:
+        for funzione in FUNZIONI_CRITICHE:
+            st.session_state[f"funzione_{funzione}_{template}"] = True
+    funzioni_selezionate = []
+    for funzione in sorted(FUNZIONI_CRITICHE):
+        # Checkbox per ogni funzione, con valore preimpostato se "Seleziona tutte" è attivo
+        checked = st.checkbox(
+            funzione,
+            key=f"funzione_{funzione}_{template}",
+            value=st.session_state.get(f"funzione_{funzione}_{template}", select_all)
+        )
+        if checked:
+            descrizione = st.text_area(
+                f"Descrizione per {funzione}",
+                key=f"desc_{funzione}_{template}",
+                value="Descrizione dettagliata del processo critico e del suo ruolo nell'organizzazione."
+            )
+            dipendenze = st.text_area(
+                f"Dipendenze per {funzione} (es. sistemi, fornitori)",
+                key=f"dip_{funzione}_{template}",
+                value="Sistemi IT (es. server principale), fornitore X per servizi cloud."
+            )
+            impatto = st.text_area(
+                f"Impatto Interruzione per {funzione}",
+                key=f"imp_{funzione}_{template}",
+                value="Perdite economiche stimate a €10,000/ora, danno reputazionale, rischio normativo."
+            )
+            funzioni_selezionate.append(f"{funzione}: {descrizione} (Dipendenze: {dipendenze}; Impatto: {impatto})")
+    st.session_state.template_data[template][field] = "; ".join(funzioni_selezionate)
                 elif field == "strategie_continuita" and template == "Continuità Operativa":
                     st.subheader("Selezione Strategie di Continuità")
                     if st.button("Seleziona Tutte le Strategie", key=f"select_all_strategie_{template}"):
