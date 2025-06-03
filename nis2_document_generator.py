@@ -19,7 +19,7 @@ from reportlab.lib.units import cm
 logging.basicConfig(filename=r'C:\Users\Francesco\python\nis2_doc_log.txt', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-# CSS per estetica
+# CSS per estetica test
 st.markdown("""
 <style>
     .main { background-color: #F5F5F5; }
