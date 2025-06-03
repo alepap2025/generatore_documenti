@@ -993,76 +993,101 @@ Il piano di trattamento del rischio include le seguenti misure:
 """
 
 # Template LaTeX per Continuità Operativa
-"Continuità Operativa": {
-    "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo", "team_crisi", "comunicazione_crisi", "contatti_emergenza", "ambito_applicazione", "riferimenti_normativi", "responsabile_piano", "supply_chain"],
-    "content": lambda data, styles: [
-        Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
-        Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
-        Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
-        Paragraph(f"P.IVA: {data['p_iva']}", styles['LegalBody']),
-        Paragraph(f"Data: {data['data']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("Piano di Continuità Operativa e Disaster Recovery", styles['LegalTitle']),
-        Spacer(1, 24),
-        Paragraph("1. INTRODUZIONE", styles['LegalHeader']),
-        Paragraph("Il presente Piano di Continuità Operativa (BCP) descrive le procedure e le risorse necessarie per garantire la continuità delle funzioni critiche dell'organizzazione in caso di interruzioni significative, come disastri naturali, attacchi informatici o guasti tecnici. Il piano è conforme alla Direttiva (UE) 2022/2555 (NIS2) e agli standard internazionali ISO 22301. È progettato per minimizzare l'impatto delle interruzioni, proteggere il patrimonio informativo e operativo, e garantire la conformità normativa.", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("2. SCOPO DEL PIANO", styles['LegalHeader']),
-        Paragraph("Lo scopo del piano è assicurare la resilienza operativa, ridurre al minimo i tempi di inattività, e mantenere la continuità dei servizi essenziali in situazioni di crisi. Il piano si concentra sulla prevenzione, la risposta immediata e il ripristino rapido delle funzioni critiche, in linea con le esigenze di business e i requisiti normativi.", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("3. AMBITO DI APPLICAZIONE", styles['LegalHeader']),
-        Paragraph(f"{data['ambito_applicazione']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("4. RIFERIMENTI NORMATIVI", styles['LegalHeader']),
-        Paragraph(f"{data['riferimenti_normativi']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("5. RESPONSABILE DEL PIANO", styles['LegalHeader']),
-        Paragraph(f"{data['responsabile_piano']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("6. OBIETTIVI DEL PIANO", styles['LegalHeader']),
-        Paragraph("Gli obiettivi principali del piano includono: garantire la continuità delle operazioni critiche, ridurre l'impatto economico e reputazionale delle interruzioni, e rispettare gli obblighi normativi.", styles['LegalBody']),
-        Paragraph(f"{data['obiettivi_piano']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("7. ANALISI DELLE FUNZIONI CRITICHE", styles['LegalHeader']),
-        Paragraph("Le seguenti funzioni critiche sono state identificate tramite un Business Impact Analysis (BIA), che valuta l'importanza di ciascun processo e l'impatto di eventuali interruzioni:", styles['LegalBody']),
-        Paragraph(f"{data['funzioni_critiche']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("8. OBIETTIVI DI RIPRISTINO (RTO e RPO)", styles['LegalHeader']),
-        Paragraph("Gli obiettivi di ripristino definiscono i tempi massimi di inattività (RTO) e la quantità massima di dati persi accettabile (RPO) per ciascuna funzione critica:", styles['LegalBody']),
-        Paragraph(f"{data['rto_rpo']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("9. STRATEGIE DI CONTINUITÀ", styles['LegalHeader']),
-        Paragraph("Le seguenti strategie sono implementate per prevenire e mitigare le interruzioni, garantendo la continuità operativa:", styles['LegalBody']),
-        Paragraph(f"{data['strategie_continuita']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("10. PROCEDURE DI RECOVERY", styles['LegalHeader']),
-        Paragraph("Le procedure di recupero sono progettate per ripristinare rapidamente le funzioni critiche, seguendo un approccio strutturato:", styles['LegalBody']),
-        Paragraph(f"{data['procedure_recovery']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("11. TEAM DI GESTIONE CRISI", styles['LegalHeader']),
-        Paragraph("Il team responsabile della gestione delle crisi coordina le attività di risposta e recupero durante un'interruzione:", styles['LegalBody']),
-        Paragraph(f"{data['team_crisi']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("12. PROTOCOLLI DI COMUNICAZIONE", styles['LegalHeader']),
-        Paragraph("I protocolli di comunicazione assicurano una gestione efficace delle informazioni durante una crisi, inclusa la notifica a dipendenti, autorità e stakeholder:", styles['LegalBody']),
-        Paragraph(f"{data['comunicazione_crisi']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("13. GESTIONE DELLA SUPPLY CHAIN", styles['LegalHeader']),
-        Paragraph("Le seguenti misure garantiscono la continuità dei servizi forniti dalla supply chain critica, in conformità ai requisiti NIS2:", styles['LegalBody']),
-        Paragraph(f"{data['supply_chain']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("14. TEST E MANUTENZIONE", styles['LegalHeader']),
-        Paragraph("Il piano è sottoposto a test regolari e aggiornato per garantire la sua efficacia e l'adeguatezza alle nuove minacce:", styles['LegalBody']),
-        Paragraph(f"{data['test_manutenzione']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("15. CONTATTI DI EMERGENZA", styles['LegalHeader']),
-        Paragraph("Elenco dei contatti da utilizzare in caso di emergenza, inclusi riferimenti interni ed esterni:", styles['LegalBody']),
-        Paragraph(f"{data['contatti_emergenza']}", styles['LegalBody']),
-        Spacer(1, 12),
-        Paragraph("16. APPENDICE: GLOSSARIO", styles['LegalHeader']),
-        Paragraph("RTO (Recovery Time Objective): Tempo massimo accettabile di inattività per una funzione critica.\nRPO (Recovery Point Objective): Quantità massima di dati che l'organizzazione può permettersi di perdere.\nBIA (Business Impact Analysis): Analisi per identificare le funzioni critiche e valutare l'impatto delle interruzioni.", styles['LegalBody'])
-    ]
-}
+CONTINUITA_OPERATIVA_TEMPLATE = r"""
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{colortbl}
+
+\geometry{margin=2cm}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small \detokenize{${ragione_sociale}} --- Data: \detokenize{${data}} --- Pagina \thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\definecolor{bluscuro}{HTML}{2C3E50}
+\rowcolors{2}{gray!10}{white}
+
+\begin{document}
+
+% Logo
+\begin{center}
+    \IfFileExists{nis2lab_logo.png}{\includegraphics[width=6cm]{nis2lab_logo.png}}{\textbf{NIS2Lab}}
+    \vspace{0.5cm}
+\end{center}
+
+% Intestazione
+\begin{center}
+    \textbf{\Large Piano di Continuità Operativa} \\
+    \vspace{0.5cm}
+    \textbf{\detokenize{${ragione_sociale}}} \\
+    Sede Legale: \detokenize{${sede_legale}} \\
+    P.IVA: \detokenize{${p_iva}} \\
+    \vspace{0.3cm}
+    Data: \detokenize{${data}}
+\end{center}
+
+\vspace{1cm}
+
+% Introduzione
+\section*{Introduzione}
+\color{black}
+\noindent
+Il presente piano descrive le procedure per garantire la continuità operativa di \detokenize{${ragione_sociale}} in conformità alla Direttiva (UE) 2022/2555 (NIS2).
+
+\vspace{0.5cm}
+
+% Obiettivi
+\section*{Obiettivi del Piano}
+\color{bluscuro}
+\noindent
+Gli obiettivi del piano sono:
+
+\begin{itemize}
+    \item \detokenize{${obiettivi_piano}}
+\end{itemize}
+
+\vspace{0.5cm}
+
+% Procedure di ripristino
+\section*{Procedure di Ripristino}
+\color{black}
+\noindent
+Le seguenti procedure sono definite per il ripristino dei servizi critici:
+
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{2.5cm}}
+    \toprule
+    \textbf{Servizio} & \textbf{Procedura} & \textbf{Tempo di Ripristino (RTO)} \\
+    \midrule
+    \detokenize{${procedure_ripristino}} \\
+    \bottomrule
+\end{tabularx}
+
+\vspace{0.5cm}
+
+% Responsabilità
+\section*{Responsabilità}
+\color{bluscuro}
+\noindent
+Le responsabilità per l’esecuzione del piano sono assegnate come segue:
+
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}X}
+    \toprule
+    \textbf{Ruolo} & \textbf{Responsabilità} \\
+    \midrule
+    \detokenize{${responsabilita_continuita}} \\
+    \bottomrule
+\end{tabularx}
+
+\end{document}
+"""
 
 # Template documenti
 templates = {
@@ -1255,34 +1280,75 @@ templates = {
         ]
     },
     "Continuità Operativa": {
-        "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo"],
-        "content": lambda data, styles: [
-            Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
-            Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
-            Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
-            Paragraph(f"P.IVA: {data['p_iva']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("Piano di Continuità Operativa e Disaster Recovery", styles['LegalTitle']),
-            Spacer(1, 12),
-            Paragraph("OBIETTIVI DEL PIANO", styles['LegalHeader']),
-            Paragraph(f"{data['obiettivi_piano']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("FUNZIONI CRITICHE", styles['LegalHeader']),
-            Paragraph(f"{data['funzioni_critiche']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("STRATEGIE DI CONTINUITÀ", styles['LegalHeader']),
-            Paragraph(f"{data['strategie_continuita']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("PROCEDURE DI RECOVERY", styles['LegalHeader']),
-            Paragraph(f"{data['procedure_recovery']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("TEST E MANUTENZIONE", styles['LegalHeader']),
-            Paragraph(f"{data['test_manutenzione']}", styles['LegalBody']),
-            Spacer(1, 12),
-            Paragraph("RTO E RPO", styles['LegalHeader']),
-            Paragraph(f"{data['rto_rpo']}", styles['LegalBody'])
-        ]
-    }
+    "fields": ["ragione_sociale", "sede_legale", "p_iva", "data", "obiettivi_piano", "funzioni_critiche", "strategie_continuita", "procedure_recovery", "test_manutenzione", "procedure_ripristino", "responsabilita_continuita", "rto_rpo", "team_crisi", "comunicazione_crisi", "contatti_emergenza", "ambito_applicazione", "riferimenti_normativi", "responsabile_piano", "supply_chain"],
+    "content": lambda data, styles: [
+        Image(logo_path, width=150, height=50) if os.path.exists(logo_path) else Paragraph("", styles['LegalBody']),
+        Paragraph(f"{data['ragione_sociale']}", styles['LegalHeader']),
+        Paragraph(f"Sede Legale: {data['sede_legale']}", styles['LegalBody']),
+        Paragraph(f"P.IVA: {data['p_iva']}", styles['LegalBody']),
+        Paragraph(f"Data: {data['data']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("Piano di Continuità Operativa e Disaster Recovery", styles['LegalTitle']),
+        Spacer(1, 24),
+        Paragraph("1. INTRODUZIONE", styles['LegalHeader']),
+        Paragraph("Il presente Piano di Continuità Operativa (BCP) descrive le procedure e le risorse necessarie per garantire la continuità delle funzioni critiche dell'organizzazione in caso di interruzioni significative, come disastri naturali, attacchi informatici o guasti tecnici. Il piano è conforme alla Direttiva (UE) 2022/2555 (NIS2) e agli standard internazionali ISO 22301. È progettato per minimizzare l'impatto delle interruzioni, proteggere il patrimonio informativo e operativo, e garantire la conformità normativa.", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("2. SCOPO DEL PIANO", styles['LegalHeader']),
+        Paragraph("Lo scopo del piano è assicurare la resilienza operativa, ridurre al minimo i tempi di inattività, e mantenere la continuità dei servizi essenziali in situazioni di crisi. Il piano si concentra sulla prevenzione, la risposta immediata e il ripristino rapido delle funzioni critiche, in linea con le esigenze di business e i requisiti normativi.", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("3. AMBITO DI APPLICAZIONE", styles['LegalHeader']),
+        Paragraph(f"{data['ambito_applicazione']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("4. RIFERIMENTI NORMATIVI", styles['LegalHeader']),
+        Paragraph(f"{data['riferimenti_normativi']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("5. RESPONSABILE DEL PIANO", styles['LegalHeader']),
+        Paragraph(f"{data['responsabile_piano']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("6. OBIETTIVI DEL PIANO", styles['LegalHeader']),
+        Paragraph("Gli obiettivi principali del piano includono: garantire la continuità delle operazioni critiche, ridurre l'impatto economico e reputazionale delle interruzioni, e rispettare gli obblighi normativi.", styles['LegalBody']),
+        Paragraph(f"{data['obiettivi_piano']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("7. ANALISI DELLE FUNZIONI CRITICHE", styles['LegalHeader']),
+        Paragraph("Le seguenti funzioni critiche sono state identificate tramite un Business Impact Analysis (BIA), che valuta l'importanza di ciascun processo e l'impatto di eventuali interruzioni:", styles['LegalBody']),
+        Paragraph(f"{data['funzioni_critiche']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("8. OBIETTIVI DI RIPRISTINO (RTO e RPO)", styles['LegalHeader']),
+        Paragraph("Gli obiettivi di ripristino definiscono i tempi massimi di inattività (RTO) e la quantità massima di dati persi accettabile (RPO) per ciascuna funzione critica:", styles['LegalBody']),
+        Paragraph(f"{data['rto_rpo']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("9. STRATEGIE DI CONTINUITÀ", styles['LegalHeader']),
+        Paragraph("Le seguenti strategie sono implementate per prevenire e mitigare le interruzioni, garantendo la continuità operativa:", styles['LegalBody']),
+        Paragraph(f"{data['strategie_continuita']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("10. PROCEDURE DI RECOVERY", styles['LegalHeader']),
+        Paragraph("Le procedure di recupero sono progettate per ripristinare rapidamente le funzioni critiche, seguendo un approccio strutturato:", styles['LegalBody']),
+        Paragraph(f"{data['procedure_recovery']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("11. TEAM DI GESTIONE CRISI", styles['LegalHeader']),
+        Paragraph("Il team responsabile della gestione delle crisi coordina le attività di risposta e recupero durante un'interruzione:", styles['LegalBody']),
+        Paragraph(f"{data['team_crisi']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("12. PROTOCOLLI DI COMUNICAZIONE", styles['LegalHeader']),
+        Paragraph("I protocolli di comunicazione assicurano una gestione efficace delle informazioni durante una crisi, inclusa la notifica a dipendenti, autorità e stakeholder:", styles['LegalBody']),
+        Paragraph(f"{data['comunicazione_crisi']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("13. GESTIONE DELLA SUPPLY CHAIN", styles['LegalHeader']),
+        Paragraph("Le seguenti misure garantiscono la continuità dei servizi forniti dalla supply chain critica, in conformità ai requisiti NIS2:", styles['LegalBody']),
+        Paragraph(f"{data['supply_chain']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("14. TEST E MANUTENZIONE", styles['LegalHeader']),
+        Paragraph("Il piano è sottoposto a test regolari e aggiornato per garantire la sua efficacia e l'adeguatezza alle nuove minacce:", styles['LegalBody']),
+        Paragraph(f"{data['test_manutenzione']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("15. CONTATTI DI EMERGENZA", styles['LegalHeader']),
+        Paragraph("Elenco dei contatti da utilizzare in caso di emergenza, inclusi riferimenti interni ed esterni:", styles['LegalBody']),
+        Paragraph(f"{data['contatti_emergenza']}", styles['LegalBody']),
+        Spacer(1, 12),
+        Paragraph("16. APPENDICE: GLOSSARIO", styles['LegalHeader']),
+        Paragraph("RTO (Recovery Time Objective): Tempo massimo accettabile di inattività per una funzione critica.\nRPO (Recovery Point Objective): Quantità massima di dati che l'organizzazione può permettersi di perdere.\nBIA (Business Impact Analysis): Analisi per identificare le funzioni critiche e valutare l'impatto delle interruzioni.", styles['LegalBody'])
+    ]
+}
 }
 def _reportlab(template_name, data):
     output = io.BytesIO()
