@@ -1518,7 +1518,7 @@ for template in templates:
                                     "probabilita": probabilita,
                                     "note": note
                                 })
-                            st.session_state.template_data[template][field] = rischi_selezionati
+                        st.session_state.template_data[template][field] = rischi_selezionati
                 elif field == "responsabilita" and template == "Nomina CISO":
                     st.subheader("Selezione Responsabilità CISO")
                     # Checkbox per selezionare tutte le responsabilità
