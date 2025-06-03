@@ -1526,12 +1526,19 @@ for template in templates:
                     st.session_state.template_data[template][field] = st.selectbox(field.replace('_', ' ').title(), SOGGETTO_ESSENZIALE, key=f"{field}_{template}")
                 elif field == "principi_sicurezza" and template == "Politica di Sicurezza":
                     st.subheader("Selezione Principi di Sicurezza")
-                    if st.button("Seleziona Tutti i Principi", key=f"select_all_principi_{template}"):
+                    # Checkbox per selezionare tutti i principi
+                    select_all = st.checkbox("Seleziona tutti i principi", key=f"select_all_principi_{template}")
+                    if select_all:
                         for principio in PRINCIPI_SICUREZZA:
                             st.session_state[f"principio_{principio}_{template}"] = True
                     principi_selezionati = []
                     for principio in sorted(PRINCIPI_SICUREZZA):
-                        if st.checkbox(principio, key=f"principio_{principio}_{template}", value=st.session_state.get(f"principio_{principio}_{template}", False)):
+                        checked = st.checkbox(
+                            principio,
+                            key=f"principio_{principio}_{template}",
+                            value=st.session_state.get(f"principio_{principio}_{template}", select_all)
+                        )
+                        if checked:
                             principi_selezionati.append(principio)
                     st.session_state.template_data[template][field] = "; ".join(principi_selezionati)
                 elif field == "ambiti_applicazione" and template == "Politica di Sicurezza":
